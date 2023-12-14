@@ -44,8 +44,9 @@ const userSchema = new Schema({
 
   weight: {
     type: Number,
-    min: 4,
+    min: 10,
     max: 300
+    required: [true, 'Set weight for user']
   },
 
   height: {
