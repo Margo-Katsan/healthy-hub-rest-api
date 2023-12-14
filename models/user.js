@@ -42,17 +42,10 @@ const userSchema = new Schema({
     required: [true, 'Set gender for user']
   },
 
-  weight: {
-    kg: {
-      type: Number,
-      min: 10,
-      max: 300,
-      required: [true, 'Set weight for user']
-    },
-    createdAt: {
-      type: Date
-    }
-  },
+  weights: [{
+    type: Schema.Types.ObjectId,
+    ref: "weight"
+  }],
 
   height: {
     type: Number,
