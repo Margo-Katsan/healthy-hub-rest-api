@@ -1,11 +1,10 @@
 const express = require('express');
 
-const ctrl = require('../../controllers/users');
-
-// const { schemas } = require('../../models/recommendedFood')
+const ctrl = require('../../controllers/recommendedFoods');
+const {authenticate} = require("../../middlewares");
 
 const router = express.Router();
 
-router.get('/', ctrl.getRecommendedFoods);
+router.get('/', authenticate,  ctrl.getRecommendedFood);
 
 module.exports = router;
