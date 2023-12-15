@@ -1,9 +1,8 @@
 const { Schema, model } = require('mongoose');
-// const Joi = require('joi');
 const { handleMongooseError } = require("../helpers");
 
-const recommendedFoodSchema = new Schema({
-  name: String, 
+const recommendedFoodsSchema = new Schema({
+  name: String,
   amount: String,
   img: String,
   calories: Number,
@@ -12,13 +11,13 @@ const recommendedFoodSchema = new Schema({
     protein: Number,
     fat: Number
   }
-  
+
 }, { versionKey: false, timestamps: true });
 
-recommendedFoodSchema.post('save', handleMongooseError)
+recommendedFoodsSchema.post('save', handleMongooseError)
 
-const RecommendedFood = model("recommendedFood", recommendedFoodSchema);
+const RecommendedFoods = model("recommendedFoods", recommendedFoodsSchema, "recommendedFoods");
 
 module.exports = {
-  RecommendedFood,
+  RecommendedFoods,
 }
