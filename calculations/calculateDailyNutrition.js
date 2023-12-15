@@ -1,4 +1,4 @@
-const { LOSE_FAT_CONSTANTS, MAINTAIN_CONSTANTS, GAIN_MUSCLE_CONSTANTS } = require("../constants/caloriesConstants")
+const { LOSE_FAT_CONSTANTS, MAINTAIN_CONSTANTS, GAIN_MUSCLE_CONSTANTS } = require("../constants/nutrationConstants")
 
 const calculateDailyNutrition = (userData) => {
   const { goal, dailyCalories } = userData;

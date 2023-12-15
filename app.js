@@ -3,7 +3,7 @@ const logger = require('morgan')
 const cors = require('cors')
 require('dotenv').config()
 
-// const authRouter = require('./routes/api/auth')
+const authRouter = require('./routes/api/auth')
 const usersRouter = require('./routes/api/user')
 // const recommendedFoodsRouter = require("./routes/api/recommended-food")
 
@@ -15,7 +15,7 @@ app.use(logger(formatsLogger))
 app.use(cors({origin: '*'}))
 app.use(express.json())
 
-// app.use('/api/auth', authRouter)
+app.use('/api/auth', authRouter)
 app.use('/api/user', usersRouter)
 // app.use('/api/recommended-food', recommendedFoodsRouter)
 

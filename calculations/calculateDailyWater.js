@@ -5,7 +5,7 @@ const {
   AVERAGE_ACTIVITY_COEFFICIENT,
   HIGH_ACTIVITY_COEFFICIENT,
   VERY_HIGH_ACTIVITY_COEFFICIENT
-} = require("../constants/caloriesConstants")
+} = require("../constants/waterConstants")
 
 const calculateDailyWater = (userData) => {
   const { weight, coefficientOfActivity } = userData;
