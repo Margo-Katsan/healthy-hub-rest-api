@@ -1,6 +1,6 @@
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const { uuid } = require('uuidv4');
+const { v4: uuidv4 } = require('uuid');
 const {transporter, createMailOptions} = require("../googleVerifySender/googleVerifySender");
 const calculateDailyCalories = require("../calculations/calculateDailyCalories");
 const calculateDailyNutrition = require("../calculations/calculateDailyNutrition");
@@ -88,17 +88,23 @@ const signin = async (req, res) => {
   
 }
 
-const updatePassword = async (req, res) => {
-  const { _id } = req.user;
-  const user = await User.findOne({ _id });
-  const new_password = uuid().slice(0, 10)
+const forgotPassword = async (req, res) => {
+  if (Object.keys(req.body).length === 0) {
+    return res.status(400).send({message: "missing field email"});
+  }
+  const { email } = req.body;
+  const user = await User.findOne({ email });
+  if (!user) {
+    throw HttpError(404, `No user with email ${email}`);
+  }
+  const new_password = uuidv4().slice(0, 10)
   let hashPassword;
   try {
     hashPassword = await bcrypt.hash(new_password, 10);
   } catch (error) {
     throw HttpError(500, "Internal Server Error");
   }
-  await User.findByIdAndUpdate(_id, {password: hashPassword });
+  await User.findByIdAndUpdate(user._id, {password: hashPassword });
 
   const mailOptions = createMailOptions(user.email, new_password)
 
@@ -108,7 +114,7 @@ const updatePassword = async (req, res) => {
     }
   });
   res.status(201).json({
-    message: "New password is send to your email"
+    message: "New password was sent to your email"
   })
 }
 
@@ -126,5 +132,5 @@ module.exports = {
   signup: ctrlWrapper(signup),
   signin: ctrlWrapper(signin),
   signout: ctrlWrapper(signout),
-  updatePassword: ctrlWrapper(updatePassword),
+  forgotPassword: ctrlWrapper(forgotPassword),
 }
