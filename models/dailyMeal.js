@@ -1,16 +1,16 @@
 const { Schema, model } = require('mongoose');
-const {mealSchema} = require('./meal')
+const { foodIntakeSchema } = require('./foodIntake')
 // const Joi = require('joi');
 const { handleMongooseError } = require("../helpers");
 
-const diarySchema = new Schema({
-   owner: {
+const dailyMealSchema = new Schema({
+  owner: {
     type: Schema.Types.ObjectId,
     ref: "user",
     required: true
   },
   breakfast: {
-    meals: [mealSchema],
+    foods: [foodIntakeSchema],
     totalCarbohydrates: {
       type: Number,
       default: 0
@@ -25,7 +25,7 @@ const diarySchema = new Schema({
     }
   },
   lunch: {
-    meals: [mealSchema],
+    foods: [foodIntakeSchema],
     totalCarbohydrates: {
       type: Number,
       default: 0
@@ -40,7 +40,7 @@ const diarySchema = new Schema({
     }
   },
   dinner: {
-    meals: [mealSchema],
+    foods: [foodIntakeSchema],
     totalCarbohydrates: {
       type: Number,
       default: 0
@@ -55,7 +55,7 @@ const diarySchema = new Schema({
     }
   },
   snack: {
-    meals: [mealSchema],
+    foods: [foodIntakeSchema],
     totalCarbohydrates: {
       type: Number,
       default: 0
@@ -69,13 +69,18 @@ const diarySchema = new Schema({
       default: 0
     }
   },
-
+  totalConsumedCarbohydratesPerDay: Number,
+  totalConsumedProteinPerDay: Number,
+  totalConsumedFatPerDay: Number,
+  totalConsumedCaloriesPerDay: Number
+  
 }, { versionKey: false, timestamps: true });
 
-diarySchema.post('save', handleMongooseError)
+dailyMealSchema.post('save', handleMongooseError)
 
-const Diary = model("diary", diarySchema);
+const DailyMeal = model("dailyMeals", dailyMealSchema, "dailyMeals");
 
 module.exports = {
-  Diary,
+  DailyMeal,
+  dailyMealSchema
 }

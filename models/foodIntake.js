@@ -2,7 +2,7 @@ const { Schema, model } = require('mongoose');
 // const Joi = require('joi');
 const { handleMongooseError } = require("../helpers");
 
-const mealSchema = new Schema({
+const foodIntakeSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -20,11 +20,11 @@ const mealSchema = new Schema({
   
 }, { versionKey: false, timestamps: true });
 
-mealSchema.post('save', handleMongooseError)
+foodIntakeSchema.post('save', handleMongooseError)
 
-const Meal = model("meal", mealSchema);
+const FoodIntake = model("foodIntakes", foodIntakeSchema, "foodIntakes");
 
 module.exports = {
-  Meal,
-  mealSchema
+  FoodIntake,
+  foodIntakeSchema
 }

@@ -1,34 +1,34 @@
 const express = require('express');
 
-const UsersCtrl = require('../../controllers/users');
+const usersCtrl = require('../../controllers/users');
 
-const DiariesCtrl = require('../../controllers/diaries')
+const intakesCtrl = require('../../controllers/intakes')
 
-const {  authenticate } = require('../../middlewares');
+const {  authenticate, isValidId } = require('../../middlewares');
 
 // const { schemas } = require('../../models/user')
 
 const router = express.Router();
 
-router.get('/current', authenticate, UsersCtrl.getCurrent);
+router.get('/current', authenticate, usersCtrl.getCurrent);
 
-router.put('/update', authenticate, UsersCtrl.updateInfo);
+router.put('/update', authenticate, usersCtrl.updateInfo);
 
-router.put('/goal', authenticate, UsersCtrl.updateGoal);
+router.put('/goal', authenticate, usersCtrl.updateGoal);
 
-router.post('/weight', authenticate, UsersCtrl.addWeight);
+router.post('/weight', authenticate, usersCtrl.addWeight);
 
-router.get('/diary', DiariesCtrl.getDiary)
+router.get('/diary', authenticate, intakesCtrl.getDiary)
 
-router.post('/food-intake', DiariesCtrl.addFoodIntake);
+router.post('/food-intake', authenticate, intakesCtrl.addFoodIntake);
 
-router.put('/food-intake/:id', DiariesCtrl.updateFoodIntake)
+router.put('/food-intake/:foodId', authenticate, isValidId, intakesCtrl.updateFoodIntake)
 
-router.delete("/food-intake", DiariesCtrl.deleteFoodIntake)
+router.delete("/food-intake", authenticate, intakesCtrl.deleteFoodIntake)
 
-router.post("/water-intake", authenticate, DiariesCtrl.addWaterIntake)
+router.post("/water-intake", authenticate, intakesCtrl.addWaterIntake)
 
-router.delete("/water-intake", authenticate, DiariesCtrl.deleteWaterIntake)
+router.delete("/water-intake", authenticate, intakesCtrl.deleteWaterIntake)
 
 // router.get("/statistics", authenticate, ctrl.getStatistics)
 

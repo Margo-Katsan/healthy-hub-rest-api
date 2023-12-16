@@ -2,8 +2,8 @@ const { Schema, model } = require('mongoose');
 // const Joi = require('joi');
 const { handleMongooseError } = require("../helpers");
 
-const weightSchema = new Schema({
-  kg: {
+const waterIntakeSchema = new Schema({
+  ml: {
     type: Number
 
   },
@@ -15,11 +15,11 @@ const weightSchema = new Schema({
   
 }, { versionKey: false, timestamps: true });
 
-weightSchema.post('save', handleMongooseError)
+waterIntakeSchema.post('save', handleMongooseError)
 
-
-const Weight = model("water", weightSchema);
+const WaterIntake = model("waterIntakes", waterIntakeSchema, "waterIntakes");
 
 module.exports = {
-  Weight,
+  WaterIntake,
+  waterIntakeSchema
 }

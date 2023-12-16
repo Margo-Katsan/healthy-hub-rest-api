@@ -1,24 +1,23 @@
 const { Schema, model } = require('mongoose');
+const {weighingSchema} = require('./weighing')
 // const Joi = require('joi');
 const { handleMongooseError } = require("../helpers");
 
-const waterSchema = new Schema({
-  ml: {
-    type: Number
-
-  },
+const weighingsDiarySchema = new Schema({
    owner: {
     type: Schema.Types.ObjectId,
     ref: "user",
     required: true
   },
+
+  weighingsByDate: [weighingSchema]
   
 }, { versionKey: false, timestamps: true });
 
-waterSchema.post('save', handleMongooseError)
+weighingsDiarySchema.post('save', handleMongooseError)
 
-const Water = model("water", waterSchema);
+const WeighingsDiary = model("weighingsDiaries", weighingsDiarySchema, "weighingsDiaries");
 
 module.exports = {
-  Water,
+  WeighingsDiary,
 }
