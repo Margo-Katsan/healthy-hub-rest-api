@@ -31,7 +31,7 @@ const calculateDailyWater = (userData) => {
       throw new Error("Invalid coefficient of activity");
   }
 
-  return (weight * BASE_WATER_REQUIREMENT_COEFFICIENT * ACTIVITY_COEFFICIENT * 1000) 
+  return Math.round(((weight * BASE_WATER_REQUIREMENT_COEFFICIENT + ACTIVITY_COEFFICIENT) * 1000))
 }
 
 module.exports = calculateDailyWater;

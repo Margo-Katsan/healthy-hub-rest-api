@@ -18,9 +18,9 @@ const calculateDailyNutrition = (userData) => {
   }
 
   return {
-    carbohydrates: CARBOHYDRATES_PART * dailyCalories,
-    protein: PROTEIN_PART * dailyCalories,
-    fat: FAT_PART * dailyCalories
+    carbohydrates: Math.round(CARBOHYDRATES_PART * dailyCalories / 4),
+    protein: Math.round(PROTEIN_PART * dailyCalories / 4),
+    fat: Math.round(FAT_PART * dailyCalories / 9)
   }
 }
 

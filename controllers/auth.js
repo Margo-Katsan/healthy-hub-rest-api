@@ -28,7 +28,7 @@ const signup = async (req, res) => {
   const newUser = await User.create({ ...req.body, password: hashPassword });
   const dailyCaloriesCall = calculateDailyCalories({
     age: newUser.age,
-    weight: 55,
+    weight: newUser.weight,
     height: newUser.height,
     gender: newUser.gender,
     coefficientOfActivity: newUser.coefficientOfActivity
@@ -38,7 +38,7 @@ const signup = async (req, res) => {
     dailyCalories: dailyCaloriesCall
   })
   const dailyWaterCalc = calculateDailyWater({
-    weight: 55,
+    weight: newUser.weight,
     coefficientOfActivity: newUser.coefficientOfActivity
   })
   const token = jwt.sign({id: newUser._id }, SECRET_KEY, {expiresIn: "23h"})

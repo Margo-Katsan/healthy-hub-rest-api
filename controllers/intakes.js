@@ -1,5 +1,7 @@
 const { ctrlWrapper } = require("../helpers")
 
+// const roundToTenths = require("../calculations/roundToTenths")
+
 const { FoodIntakesDiary } = require("../models/foodIntakesDiary")
 
 const { WaterIntakesDiary } = require("../models/waterIntakesDiary")
@@ -21,17 +23,6 @@ const getOrCreateDiary = async (owner, Diary) => {
   return diary;
 };
 
-const getOrCreateDailyMeal = async (owner) => {
-  let meal = await DailyMeal.findOne({ owner });
-
-  if (!meal || meal.createdAt.toDateString() !== new Date().toDateString()) {
-    meal = new DailyMeal({ owner });
-    await meal.save();
-  }
-
-  return meal;
-};
-
 const getUpdatedDailyMeal = (mealType, savedFood) => ({
   $push: { [`${mealType}.foods`]: savedFood },
   $inc: {
@@ -45,7 +36,6 @@ const getUpdatedDailyMeal = (mealType, savedFood) => ({
   },
 });
 
-
 const getDiary = async (req, res) => {
   const { _id: owner } = req.user;
   const result = await FoodIntakesDiary.find({owner})
@@ -55,24 +45,45 @@ const getDiary = async (req, res) => {
 const addFoodIntake = async (req, res) => {
   const { mealType, foodDetails } = req.body;
   const { _id: owner } = req.user;
+  
+  let updatedMealsByDay;
 
-  await getOrCreateDiary(owner, FoodIntakesDiary);
-
-  let dailyMeal = await getOrCreateDailyMeal(owner);
-
+  let wasCreatedNewDailyMeal = false;
+  
   const newFood = new FoodIntake(foodDetails);
 
   const savedFood = await newFood.save();
 
-  const updatedDailyMeal = getUpdatedDailyMeal(mealType, savedFood);
+  const diary = await getOrCreateDiary(owner, FoodIntakesDiary);
+  // потом заменить на текущую дату
+  let dailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } })
 
-  dailyMeal = await DailyMeal.findOneAndUpdate({ owner }, updatedDailyMeal, { new: true });
+  if (!dailyMeal) {
+    dailyMeal = new DailyMeal({ owner });
+    await dailyMeal.save();
+    wasCreatedNewDailyMeal = true;
+  }
+  // потом заменить на текущую дату
+  dailyMeal = await DailyMeal.findOneAndUpdate({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } }, getUpdatedDailyMeal(mealType, savedFood), { new: true });
+  
+  if (wasCreatedNewDailyMeal) {
+    updatedMealsByDay = {
+      $push: {
+        mealsByDate: dailyMeal
+      }
+    }
+  }
+  else {
+    updatedMealsByDay = {
+      $set: {
+        [`mealsByDate.${diary.mealsByDate.length - 1}`]: dailyMeal
+      }
+    }
+  }
 
-  const updatedMealsByDay = { mealsByDate: dailyMeal };
+  await FoodIntakesDiary.findOneAndUpdate({ owner }, updatedMealsByDay, { new: true });
 
-  const updatedDiary = await FoodIntakesDiary.findOneAndUpdate({ owner }, updatedMealsByDay, { new: true });
-
-  return res.status(200).json(updatedDiary);
+  return res.status(200).json(dailyMeal);
 
 };
 
@@ -117,34 +128,48 @@ const deleteFoodIntake = async (req, res) => {
 const addWaterIntake = async (req, res) => {
   const { _id: owner } = req.user
   let updatedWaterIntakesByDate;
-  let water = await WaterIntake.findOne({ owner });
 
-  await getOrCreateDiary(owner, WaterIntakesDiary);
+  let wasCreatedNewWaterIntake = false;
+
+  let waterIntake = await WaterIntake.findOne({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } });
+
+  const diary = await getOrCreateDiary(owner, WaterIntakesDiary);
+
+  if (!waterIntake) {
+    waterIntake = new WaterIntake({ owner });
+    await waterIntake.save();
+    wasCreatedNewWaterIntake = true;
+  }
+
+  waterIntake = await WaterIntake.findOneAndUpdate(
+    { owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } },
+    {
+      $inc: {
+        ml: req.body.ml
+      }
+    },
+    { new: true });
   
-  if (!water || water.createdAt.toDateString() !== new Date().toDateString()) {
-    
-    water = new WaterIntake({ ...req.body, owner });
-    const savedWater = await water.save();
-    
+  if (wasCreatedNewWaterIntake) {
     updatedWaterIntakesByDate = {
-      $push: {waterIntakesByDate: savedWater}
+      $push: {
+        waterIntakesByDate: waterIntake
+      }
     }
   }
-
   else {
-    const updatedWater = await WaterIntake.findOneAndUpdate({ owner }, { $inc: { ml: req.body.ml } })
-
     updatedWaterIntakesByDate = {
-      waterIntakesByDate: updatedWater
+      $set: {
+        [`waterIntakesByDate.${diary.waterIntakesByDate.length - 1}`]: waterIntake
+      }
     }
-
   }
+  
 
-  const result = await WaterIntakesDiary.findOneAndUpdate({ owner }, updatedWaterIntakesByDate, { new: true });
-  res.status(201).json(result);
+  await WaterIntakesDiary.findOneAndUpdate({ owner }, updatedWaterIntakesByDate, { new: true });
+  res.status(201).json(waterIntake);
   
 }
-
 
 const deleteWaterIntake = async (req, res) => {
   

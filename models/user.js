@@ -113,8 +113,6 @@ const loginSchema = Joi.object({
   password: Joi.string().min(8).required()
 })
 
-
-
 const schemas = {
   registerSchema,
   emailSchema,

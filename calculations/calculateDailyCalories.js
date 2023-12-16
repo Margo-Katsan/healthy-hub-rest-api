@@ -15,7 +15,7 @@ const calculateDailyCalories = (userData) => {
       throw new Error("Invalid gender");
   }
 
-  return (BASE_METABOLIC_RATE + (WEIGHT_COEFFICIENT * weight) + (HEIGHT_COEFFICIENT * height) - (AGE_COEFFICIENT * age) ) * coefficientOfActivity
+  return Math.round((BASE_METABOLIC_RATE + (WEIGHT_COEFFICIENT * weight) + (HEIGHT_COEFFICIENT * height) - (AGE_COEFFICIENT * age) ) * coefficientOfActivity)
 }
 
 
