@@ -90,7 +90,7 @@ const userSchema = new Schema({
 userSchema.post('save', handleMongooseError)
 
 const registerSchema = Joi.object({
-  name: Joi.string().require(),
+  name: Joi.string().required(),
   email: Joi.string().pattern(emailRegex).required(),
   password: Joi.string().min(8).required(),
   age: Joi.number().min(8).max(120).required(),
