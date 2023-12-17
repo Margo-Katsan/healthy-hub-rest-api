@@ -131,7 +131,7 @@ const getStatistic = async (req, res) => {
         owner: _id,
         createdAt: {$gte: startOfMonth, $lte: endOfMonth}
     })
-    let dataByMonth = { callPerDay: [], weightPerDay: [], waterPerDay: [] };
+    const dataByMonth = { callPerDay: [], weightPerDay: [], waterPerDay: [] };
     for (const entry of mealsForMonth) {
         const totalCalories = entry.totalConsumedCaloriesPerDay || 0;
         const day = entry.createdAt.getDate();
@@ -141,19 +141,19 @@ const getStatistic = async (req, res) => {
             calories: totalCalories
         });
     }
-    let previous_day = null
-    let previous_weight = null
+    let previousDay = null
+    let previousWeight = null
     for (const entry of weightForMonth) {
-        const weight = entry.kg || 0;
+        const weight = entry.weight || 0;
         const day = entry.createdAt.getDate();
-        if (previous_day !== null && day - previous_day !== 1) {
+        if (previousDay !== null && day - previousDay !== 1) {
             dataByMonth.weightPerDay.push({
-                day: previous_day + 1,
-                weight: previous_weight
+                day: previousDay + 1,
+                weight: previousWeight
             })
         }
-        previous_weight = weight
-        previous_day = day
+        previousWeight = weight
+        previousDay = day
 
         dataByMonth.weightPerDay.push({
             day: day,

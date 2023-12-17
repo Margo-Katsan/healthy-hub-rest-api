@@ -52,20 +52,16 @@ const signup = async (req, res) => {
   })
 
   await creatingWeighingsDiary(newUser._id, newUser.weight, WeighingsDiary, Weighing)
-  
+  const dataForResponse = await User.findOne({ email }).select('-password');
   res.status(201).json({
     token,
-    user: {
-      name: newUser.name ?? '',
-      email: newUser.email,
-    }
-    
+    user: dataForResponse
   })
 }
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  const user = await User.findOne({ email })
   if (!user) {
     throw HttpError(401, "Email or password invalid");
   }
@@ -78,17 +74,13 @@ const signin = async (req, res) => {
   const payload = {
     id: user._id
   }
-  const filteredUser = {
-    name: user.name ?? '',
-    email: user.email,
-  }
 
   const token = jwt.sign(payload, SECRET_KEY, {expiresIn: "23h"})
   await User.findByIdAndUpdate(user._id, { token })
-  
+  const dataForResponse = await User.findOne({ email }).select('-password');
+
   res.json({
-    token,
-    user: filteredUser
+    user: dataForResponse
   })
   
 }
@@ -105,16 +97,16 @@ const forgotPassword = async (req, res) => {
   if (!user) {
     throw HttpError(404, `No user with email ${email}`);
   }
-  const new_password = uuidv4().slice(0, 10)
+  const newPassword = uuidv4().slice(0, 10)
   let hashPassword;
   try {
-    hashPassword = await bcrypt.hash(new_password, 10);
+    hashPassword = await bcrypt.hash(newPassword, 10);
   } catch (error) {
     throw HttpError(500, "Internal Server Error");
   }
   await User.findByIdAndUpdate(user._id, {password: hashPassword });
 
-  const mailOptions = createMailOptions(user.email, new_password)
+  const mailOptions = createMailOptions(user.email, newPassword)
 
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
