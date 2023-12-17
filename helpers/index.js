@@ -4,6 +4,8 @@ const handleMongooseError = require("./handleMongooseError");
 const getOrCreateDiary = require("./diaryHelpers/getOrCreateDiary")
 const creatingWeighingsDiary = require("./diaryHelpers/creatingWeighingsDiary")
 const getStartAndEndOfDay = require("./getStartAndEndOfDay")
+const createMailOptions = require('./googleVerifySender/createMailOptions')
+const transporter = require('./googleVerifySender/transporter')
 
 module.exports = {
   HttpError,
@@ -11,5 +13,7 @@ module.exports = {
   handleMongooseError,
   getOrCreateDiary,
   creatingWeighingsDiary,
-  getStartAndEndOfDay
+  getStartAndEndOfDay,
+  createMailOptions,
+  transporter
 }

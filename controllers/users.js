@@ -1,4 +1,6 @@
-const { ctrlWrapper, creatingWeighingsDiary} = require("../helpers")
+const { ctrlWrapper, creatingWeighingsDiary, getStartAndEndOfDay } = require("../helpers")
+
+const { calculateDailyCalories, calculateDailyNutrition, calculateDailyWater } = require("../calculations");
 
 const { DailyMeal } = require("../models/dailyMeal")
 
@@ -8,20 +10,17 @@ const { Weighing } = require("../models/weighing");
 
 const { User } = require("../models/user")
 
-const calculateDailyCalories = require("../calculations/calculateDailyCalories");
-
-const calculateDailyNutrition = require("../calculations/calculateDailyNutrition");
-
-const calculateDailyWater = require("../calculations/calculateDailyWater");
-
 const {WaterIntake} = require("../models/waterIntake");
 
 const getCurrent = async (req, res) => {
   const { _id: owner, name, goal, weight, dailyCalories, dailyNutrition, dailyWater } = req.user;
-  let getDailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: new Date('2023-12-18'), $lt: new Date('2023-12-19') } })
-  if (!getDailyMeal) {
-    getDailyMeal = null;
-  }
+
+  const { startOfDay, endOfDay } = getStartAndEndOfDay();
+
+  const getDailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+
+  const getWaterIntake = await WaterIntake.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+
   res.json({
     name,
     goal,
@@ -29,7 +28,8 @@ const getCurrent = async (req, res) => {
     dailyCalories,
     dailyNutrition: {...dailyNutrition},
     dailyWater,
-    consumedMealsByDay: getDailyMeal
+    consumedMealsByDay: getDailyMeal,
+    consumedWaterByDay: getWaterIntake
   })
 
 }
@@ -192,7 +192,6 @@ const addAvatar = async (req, res) => {
 
   res.json(updatedUser)
 }
-
 
 module.exports = {
   getCurrent: ctrlWrapper(getCurrent),

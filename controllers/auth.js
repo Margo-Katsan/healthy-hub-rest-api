@@ -1,18 +1,24 @@
 const bcrypt = require("bcrypt")
+
 const jwt = require("jsonwebtoken")
+
 const { v4: uuidv4 } = require('uuid');
-const {transporter, createMailOptions} = require("../googleVerifySender/googleVerifySender");
-const calculateDailyCalories = require("../calculations/calculateDailyCalories");
-const calculateDailyNutrition = require("../calculations/calculateDailyNutrition");
-const calculateDailyWater = require("../calculations/calculateDailyWater");
-const { HttpError, ctrlWrapper, creatingWeighingsDiary } = require("../helpers");
+
+const { calculateDailyCalories, calculateDailyNutrition, calculateDailyWater } = require("../calculations");
+
+const { HttpError, ctrlWrapper, creatingWeighingsDiary, transporter, createMailOptions, getStartAndEndOfDay } = require("../helpers");
+
 const { User } = require('../models/user');
+
 const { WeighingsDiary } = require("../models/weighingsDiary");
 
 const { Weighing } = require("../models/weighing");
 
-const { SECRET_KEY } = process.env;
+const { DailyMeal } = require("../models/dailyMeal")
 
+const { WaterIntake } = require("../models/waterIntake");
+
+const { SECRET_KEY } = process.env;
 
 const signup = async (req, res) => {
   const { email, password } = req.body;
@@ -61,6 +67,9 @@ const signup = async (req, res) => {
 
 const signin = async (req, res) => {
   const { email, password } = req.body;
+
+  const { startOfDay, endOfDay } = getStartAndEndOfDay();
+
   const user = await User.findOne({ email })
   if (!user) {
     throw HttpError(401, "Email or password invalid");
@@ -77,10 +86,17 @@ const signin = async (req, res) => {
 
   const token = jwt.sign(payload, SECRET_KEY, {expiresIn: "23h"})
   await User.findByIdAndUpdate(user._id, { token })
+
   const dataForResponse = await User.findOne({ email }).select('-password');
 
+  const getDailyMeal = await DailyMeal.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+
+  const getWaterIntake = await WaterIntake.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+
   res.json({
-    user: dataForResponse
+    user: dataForResponse,
+    consumedMealsByDay: getDailyMeal,
+    consumedWaterByDay: getWaterIntake
   })
   
 }
@@ -126,7 +142,6 @@ const signout = async (req, res) => {
     message: "Logout success"
   })
 }
-
 
 module.exports = {
   signup: ctrlWrapper(signup),
