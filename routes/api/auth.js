@@ -4,13 +4,13 @@ const ctrl = require('../../controllers/auth')
 
 const { validateBody, authenticate } = require('../../middlewares')
 
-const {schemas} = require('../../models/user')
+const {userSchemas} = require('../../models/user')
 
 const router = express.Router();
 
-router.post('/signup', validateBody(schemas.registerSchema), ctrl.signup)
+router.post('/signup', validateBody(userSchemas.registerSchema), ctrl.signup)
 
-router.post('/signin', validateBody(schemas.loginSchema), ctrl.signin)
+router.post('/signin', validateBody(userSchemas.loginSchema), ctrl.signin)
 
 router.post("/forgot-password", ctrl.forgotPassword)
 
