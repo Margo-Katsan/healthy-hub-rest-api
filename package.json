@@ -27,6 +27,8 @@
     "multer-storage-cloudinary": "^4.0.0",
     "nanoid": "^3.3.4",
     "nodemailer": "^6.9.7",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0",
     "uuidv4": "^6.2.13"
   },
   "devDependencies": {
