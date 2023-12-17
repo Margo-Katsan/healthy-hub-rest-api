@@ -98,6 +98,9 @@ const forgotPassword = async (req, res) => {
     return res.status(400).send({message: "missing field email"});
   }
   const { email } = req.body;
+  if (email === undefined){
+    return res.status(400).send({message: "required only email field"});
+  }
   const user = await User.findOne({ email });
   if (!user) {
     throw HttpError(404, `No user with email ${email}`);
