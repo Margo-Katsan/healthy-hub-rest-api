@@ -13,16 +13,17 @@
  *     summary: User Registration
  *     description: |
  *       Register a new user. To successfully register, you need to pass the basic
- *       user parameters in JSON format through the request body. Request parameters:
+ *       user parameters in JSON format through the request body.
  *
+ *       Request body:
  *       - <b>name</b> (string): User's name.
  *       - <b>email</b> (string): User's email.
  *       - <b>password</b> (string): User's password.
- *       - <b>age</b> (integer): User's age.
- *       - <b>weight</b> (integer): User's weight.
- *       - <b>height</b> (integer): User's height.
+ *       - <b>age</b> (number): User's age.
+ *       - <b>weight</b> (number): User's weight.
+ *       - <b>height</b> (number): User's height.
  *       - <b>gender</b> (string): User's gender. Choose from values: ['male', 'female'].
- *       - <b>coefficientOfActivity</b> (integer): User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9].
+ *       - <b>coefficientOfActivity</b> (number): User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9].
  *       - <b>goal</b> (string): User's goal. Choose from values: ['lose fat', 'maintain', 'gain muscle'].
  *
  *     requestBody:
@@ -42,20 +43,20 @@
  *                 type: string
  *                 description: "User's password."
  *               age:
- *                 type: integer
+ *                 type: number
  *                 description: "User's age."
  *               weight:
- *                 type: integer
+ *                 type: number
  *                 description: "User's weight."
  *               height:
- *                 type: integer
+ *                 type: number
  *                 description: "User's height."
  *               gender:
  *                 type: string
  *                 description: "User's gender."
  *                 enum: ['male', 'female']
  *               coefficientOfActivity:
- *                  type: integer
+ *                  type: number
  *                  description: "User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9]."
  *                  enum: [1.2, 1.375, 1.55, 1.725, 1.9]
  *               goal:
@@ -80,8 +81,9 @@
  *       summary: User Login
  *       description: |
  *         Authenticate the user in the system. To successfully log in, you need to pass
- *         the user's credentials in JSON format through the request body. Request parameters:
+ *         the user's credentials in JSON format through the request body.
  *
+ *         Request body:
  *         - <b>email</b> (string): User's email.
  *         - <b>password</b> (string): User's password.
  *
@@ -148,7 +150,7 @@
  *       Initiate the password reset process. To reset the password, provide the user's email
  *       in JSON format through the request body.
  *
- *       Request parameters:
+ *       Request body:
  *       - <b>email</b> (string): User's email for password reset.
  *
  *     requestBody:
@@ -217,6 +219,9 @@
  *       Retrieve monthly statistics for the user based on their profile. The response
  *       will include information about weight, water, and calories for the specified month.
  *
+ *       Request body:
+ *       - <b>month</b> (number, required): The month for which to retrieve statistics. Should be a number between 1 and 12..
+ *
  *     security:
  *       - bearerAuth: []
  *
@@ -226,7 +231,7 @@
  *         description: "The month for which to retrieve statistics. Should be a number between 1 and 12."
  *         required: true
  *         schema:
- *           type: integer
+ *           type: number
  *           minimum: 1
  *           maximum: 12
  *
@@ -263,4 +268,542 @@
  *           application/json:
  *             example:
  *               message: "Unauthorized"
+ * /api/user/current:
+ *   get:
+ *     tags:
+ *       - User
+ *     summary: Get Current User
+ *     description: |
+ *       Retrieve information about the currently authenticated user.
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     responses:
+ *       '200':
+ *         description: "Successfully retrieved current user information"
+ *         content:
+ *           application/json:
+ *             example:
+ *               user:
+ *                 name: "John Doe"
+ *                 email: "john@example.com"
+ *                 age: 25
+ *                 weight: 70
+ *                 height: 175
+ *                 gender: "male"
+ *                 coefficientOfActivity: 1.55
+ *                 goal: "lose fat"
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ * /api/user/update:
+ *   put:
+ *     tags:
+ *       - User
+ *     summary: Update User Information
+ *     description: |
+ *       Update user information such as age, weight, height, gender, coefficient of activity, and goal.
+ *
+ *       Request body:
+ *       - <b>age</b> (number): User's age.
+ *       - <b>weight</b> (number): User's weight.
+ *       - <b>height</b> (number): User's height.
+ *       - <b>gender</b> (string): User's gender. Choose from values: ['male', 'female'].
+ *       - <b>coefficientOfActivity</b> (number): User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9].
+ *       - <b>goal</b> (string): User's goal. Choose from values: ['lose fat', 'maintain', 'gain muscle'].
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               age:
+ *                 type: number
+ *                 description: "User's age."
+ *               weight:
+ *                 type: number
+ *                 description: "User's weight."
+ *               height:
+ *                 type: number
+ *                 description: "User's height."
+ *               gender:
+ *                 type: string
+ *                 description: "User's gender."
+ *                 enum: ['male', 'female']
+ *               coefficientOfActivity:
+ *                 type: number
+ *                 description: "User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9]."
+ *                 enum: [1.2, 1.375, 1.55, 1.725, 1.9]
+ *               goal:
+ *                 type: string
+ *                 description: "User's goal. Choose from values: ['lose fat', 'maintain', 'gain muscle']."
+ *                 enum: ['lose fat', 'maintain', 'gain muscle']
+ *
+ *     responses:
+ *       '200':
+ *         description: "User information updated successfully"
+ *         content:
+ *           application/json:
+ *             example:
+ *               user:
+ *                 name: "John Doe"
+ *                 email: "john@example.com"
+ *                 age: 30
+ *                 weight: 75
+ *                 height: 180
+ *                 gender: "male"
+ *                 coefficientOfActivity: 1.55
+ *                 goal: "maintain"
+ *                 dailyWater: 1222
+ *                 dailyCalories: 2500
+ *                 dailyNutrition:
+ *                  - carbohydrates: 265
+ *                  - protein: 125
+ *                  - fat: 44
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ * /api/user/goal:
+ *   put:
+ *     tags:
+ *       - User
+ *     summary: Update User Goal
+ *     description: |
+ *       Update the user's goal, which will recalculate daily nutrition based on the new goal.
+ *
+ *       Request body:
+ *       - <b>goal</b> (string, required): User's new goal. Choose from values: ['lose fat', 'maintain', 'gain muscle'].
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               goal:
+ *                 type: string
+ *                 description: "User's new goal. Choose from values: ['lose fat', 'maintain', 'gain muscle']."
+ *                 enum: ['lose fat', 'maintain', 'gain muscle']
+ *
+ *     responses:
+ *       '200':
+ *         description: "User goal updated successfully"
+ *         content:
+ *           application/json:
+ *             example:
+ *               user:
+ *                 name: "John Doe"
+ *                 email: "john@example.com"
+ *                 age: 30
+ *                 weight: 75
+ *                 height: 180
+ *                 gender: "male"
+ *                 coefficientOfActivity: 1.55
+ *                 goal: "maintain"
+ *                 dailyNutrition:
+ *                  - carbohydrates: 265
+ *                  - protein: 125
+ *                  - fat: 44
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ * /api/user/weight:
+ *   post:
+ *     tags:
+ *       - User
+ *     summary: Add User Weight
+ *     description: |
+ *       Add the user's weight, which will recalculate daily nutrition and update other relevant information.
+ *
+ *       Request body:
+ *       - <b>weight</b> (number, required): User's weight.
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               weight:
+ *                 type: number
+ *                 description: "User's new weight."
+ *
+ *     responses:
+ *       '200':
+ *         description: "User weight added successfully"
+ *         content:
+ *           application/json:
+ *             example:
+ *               user:
+ *                 name: "John Doe"
+ *                 email: "john@example.com"
+ *                 age: 30
+ *                 weight: 80 // Updated weight
+ *                 height: 180
+ *                 gender: "male"
+ *                 coefficientOfActivity: 1.55
+ *                 goal: "maintain"
+ *                 dailyWater: 1222
+ *                 dailyCalories: 2500
+ *                 dailyNutrition:
+ *                  - carbohydrates: 265
+ *                  - protein: 125
+ *                  - fat: 44
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ * /api/user/food-intake:
+ *   post:
+ *     tags:
+ *       - User
+ *     summary: Add Food Intake
+ *     description: |
+ *       Add a food intake entry for a specific meal type. This will update the user's daily meal diary
+ *
+ *       Request body:
+ *       - <b>mealType</b> (string, required): Type of the meal for the food intake. Choose from values: ['breakfast', 'lunch', 'dinner', 'snack'].
+ *       - <b>foodDetails</b> (object, required): Details of the consumed food.
+ *         - <b>name</b> (string): Name of the food.
+ *         - <b>nutrition</b> (object): Nutritional information of the food.
+ *           - <b>carbohydrates</b> (number): Carbohydrates content in grams.
+ *           - <b>protein</b> (number): Protein content in grams.
+ *           - <b>fat</b> (number): Fat content in grams.
+ *         - <b>calories</b> (number): Calories content of the food.
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mealType:
+ *                 type: string
+ *                 description: "Type of the meal. Choose from values: ['breakfast', 'lunch', 'dinner', 'snack']."
+ *                 enum: ['breakfast', 'lunch', 'dinner', 'snack']
+ *               foodDetails:
+ *                 type: object
+ *                 description: "Details of the consumed food."
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                     description: "Name of the food."
+ *                   nutrition:
+ *                     type: object
+ *                     description: "Nutritional information of the food."
+ *                     properties:
+ *                       carbohydrates:
+ *                         type: number
+ *                         description: "Carbohydrates content in grams."
+ *                       protein:
+ *                         type: number
+ *                         description: "Protein content in grams."
+ *                       fat:
+ *                         type: number
+ *                         description: "Fat content in grams."
+ *                   calories:
+ *                     type: number
+ *                     description: "Calories content of the food."
+ *
+ *     responses:
+ *       '200':
+ *         description: "Food intake added successfully"
+ *         content:
+ *           application/json:
+ *             example:
+ *               meal:
+ *                 owner: "user_id"
+ *                 mealType: "breakfast"
+ *                 foods: [...list of foods]
+ *                 totalCarbohydrates: 30
+ *                 totalProtein: 15
+ *                 totalFat: 10
+ *                 totalConsumedCarbohydratesPerDay: 30
+ *                 totalConsumedProteinPerDay: 15
+ *                 totalConsumedFatPerDay: 10
+ *                 totalConsumedCaloriesPerDay: 250
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ *   delete:
+ *     tags:
+ *       - User
+ *     summary: Delete Food Intake
+ *     description: |
+ *       Delete a food intake entry for a user. This will update the user's daily food intake diary.
+ *
+ *       Request body:
+ *       - <b>mealType</b> (string, required): Type of the meal for the food intake. Choose from values: ['breakfast', 'lunch', 'dinner', 'snack'].
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mealType:
+ *                 type: string
+ *                 description: "Type of the meal to delete. Choose from values: ['breakfast', 'lunch', 'dinner', 'snack']."
+ *                 enum: ['breakfast', 'lunch', 'dinner', 'snack']
+ *
+ *     responses:
+ *       '200':
+ *         description: "Food intake deleted successfully"
+ *         content:
+ *           application/json:
+ *             example:
+ *               meal:
+ *                 owner: "user_id"
+ *                 mealType: "breakfast"
+ *                 foods: []
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ *       '404':
+ *         description: "Food intake not found"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Food intake not found"
+ * /api/user/water-intake:
+ *   post:
+ *     tags:
+ *       - User
+ *     summary: Add Water Intake
+ *     description: |
+ *       Add a water intake entry for a user. This will update the user's daily water intake diary.
+ *
+ *       Request body:
+ *       - **ml** (*number*): Amount of water intake in milliliters.
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               ml:
+ *                 type: number
+ *                 description: "Amount of water intake in milliliters."
+ *                 minimum: 0
+ *                 example: 500
+ *
+ *     responses:
+ *       '201':
+ *         description: "Water intake added successfully"
+ *         content:
+ *           application/json:
+ *             example:
+ *               waterIntake:
+ *                 owner: "user_id"
+ *                 ml: 500
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ *   delete:
+ *       tags:
+ *         - User
+ *       summary: Delete Water Intake
+ *       description: "Delete a water intake entry for a user. This will update the user's daily water intake diary."
+ *       security:
+ *         - bearerAuth: []
+ *       responses:
+ *         '201':
+ *           description: "Water intake deleted successfully"
+ *           content:
+ *             application/json:
+ *               example:
+ *                 waterIntake:
+ *                   owner: "user_id"
+ *                   ml: 500
+ *         '401':
+ *           description: "Unauthorized"
+ *           content:
+ *             application/json:
+ *               example:
+ *                 message: "Unauthorized"
+ * /api/user/food-intake/{foodId}:
+ *   put:
+ *     tags:
+ *       - User
+ *     summary: Update Food Intake
+ *     description: |
+ *       Update a food intake entry for a user. This will update the user's daily food intake diary.
+ *
+ *       Request body:
+ *       - **foodId** (*object*): ID of the food intake to update.
+ *       - <b>mealType</b> (string, required): Type of the meal for the food intake. Choose from values: ['breakfast', 'lunch', 'dinner', 'snack'].
+ *       - <b>foodDetails</b> (object, required): Details of the consumed food.
+ *         - <b>name</b> (string): Name of the food.
+ *         - <b>nutrition</b> (object): Nutritional information of the food.
+ *           - <b>carbohydrates</b> (number): Carbohydrates content in grams.
+ *           - <b>protein</b> (number): Protein content in grams.
+ *           - <b>fat</b> (number): Fat content in grams.
+ *         - <b>calories</b> (number): Calories content of the food.
+ *
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     parameters:
+ *       - name: foodId
+ *         in: path
+ *         description: "ID of the food intake to update."
+ *         required: true
+ *         schema:
+ *           type: string
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               mealType:
+ *                 type: string
+ *                 description: "Type of the meal for the food intake. Choose from values: ['breakfast', 'lunch', 'dinner', 'snack']."
+ *                 enum: ['breakfast', 'lunch', 'dinner', 'snack']
+ *               foodDetails:
+ *                 type: object
+ *                 description: "Details of the updated food intake."
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                     description: "Name of the food."
+ *                   calories:
+ *                     type: number
+ *                     description: "Calories in the food."
+ *                   nutrition:
+ *                     type: object
+ *                     description: "Nutritional information of the food."
+ *                     properties:
+ *                       carbohydrates:
+ *                         type: number
+ *                         description: "Carbohydrates in grams."
+ *                       protein:
+ *                         type: number
+ *                         description: "Protein in grams."
+ *                       fat:
+ *                         type: number
+ *                         description: "Fat in grams."
+ *
+ *     responses:
+ *       '200':
+ *         description: "Food intake updated successfully"
+ *         content:
+ *           application/json:
+ *             example:
+ *               meal:
+ *                 owner: "user_id"
+ *                 mealType: "breakfast"
+ *                 foods:
+ *                   - _id: "food_id"
+ *                     name: "Updated Food"
+ *                     calories: 300
+ *                     nutrition:
+ *                       carbohydrates: 20
+ *                       protein: 10
+ *                       fat: 15
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ *       '404':
+ *         description: "Food intake not found"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Food intake not found"
+ * /api/user/avatar:
+ *   post:
+ *     tags:
+ *       - User
+ *     summary: Add User Avatar
+ *     description: |
+ *       Add the avatar for a user.
+ *
+ *     security:
+ *       - bearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               avatar:
+ *                 type: string
+ *                 format: binary
+ *                 description: "Avatar image file."
+ *
+ *     responses:
+ *       '200':
+ *         description: "Avatar added successfully"
+ *         content:
+ *           application/json:
+ *             example:
+ *               user:
+ *                 _id: "user_id"
+ *                 avatarURL: "https://example.com/avatar.jpg"
+ *       '401':
+ *         description: "Unauthorized"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Unauthorized"
+ *       '500':
+ *         description: "Internal Server Error"
+ *         content:
+ *           application/json:
+ *             example:
+ *               message: "Internal Server Error"
  */
