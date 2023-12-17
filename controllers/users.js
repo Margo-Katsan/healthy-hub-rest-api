@@ -106,15 +106,15 @@ const addWeight = async (req, res) => {
 }
 
 const getStatistic = async (req, res) => {
-    if (Object.keys(req.body).length === 0) {
-        return res.status(400).send({message: "missing field month"});
+    const { month } = req.query;
+    if (!month) {
+        return res.status(400).send({ message: "missing or invalid 'month' parameter" });
     }
-    if (Object.keys(req.body).length > 1) {
-        return res.status(400).send({message: "required only month field"});
-    }
-    const {month} = req.body;
-    if (month === undefined){
-        return res.status(400).send({message: "required only month field"});
+
+    const parsedMonth = parseInt(month, 10);
+
+    if (isNaN(parsedMonth) || parsedMonth < 1 || parsedMonth > 12) {
+        return res.status(400).send({ message: "invalid 'month' parameter" });
     }
     const {_id} = req.user;
     const startOfMonth = new Date(new Date().getFullYear(), month - 1, 1);
