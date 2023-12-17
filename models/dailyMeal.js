@@ -22,6 +22,10 @@ const dailyMealSchema = new Schema({
     totalFat: {
       type: Number,
       default: 0
+    },
+    totalCalories: {
+      type: Number,
+      default: 0
     }
   },
   lunch: {
@@ -35,6 +39,10 @@ const dailyMealSchema = new Schema({
       default: 0
     },
     totalFat: {
+      type: Number,
+      default: 0
+    },
+    totalCalories: {
       type: Number,
       default: 0
     }
@@ -52,6 +60,10 @@ const dailyMealSchema = new Schema({
     totalFat: {
       type: Number,
       default: 0
+    },
+    totalCalories: {
+      type: Number,
+      default: 0
     }
   },
   snack: {
@@ -65,6 +77,10 @@ const dailyMealSchema = new Schema({
       default: 0
     },
     totalFat: {
+      type: Number,
+      default: 0
+    },
+    totalCalories: {
       type: Number,
       default: 0
     }

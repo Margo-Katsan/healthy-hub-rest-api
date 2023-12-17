@@ -1,26 +1,29 @@
 const getOrCreateDiary = require("./getOrCreateDiary");
+const getStartAndEndOfDay = require("../getStartAndEndOfDay")
 
 const creatingWeighingsDiary = async ( owner, newWeighing, WeighingsDiary, Weighing) => {
   let updatedWeighingsByDate;
 
   let wasCreatedNewWeighing = false;
 
-  let weighing = await Weighing.findOne({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } });
+  const { startOfDay, endOfDay } = getStartAndEndOfDay();
+
+  let weighing = await Weighing.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } });
   
   const diary = await getOrCreateDiary(owner, WeighingsDiary);
 
   if (!weighing) {
-    weighing = new Weighing({ owner, kg: newWeighing });
+    weighing = new Weighing({ owner, weight: newWeighing });
 
     await weighing.save();
     wasCreatedNewWeighing = true;
   }
 
   weighing = await Weighing.findOneAndUpdate(
-    { owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } },
+    { owner, createdAt: { $gte: startOfDay, $lt: endOfDay } },
     {
       
-        kg: newWeighing
+        weight: newWeighing
       
     },
     { new: true });

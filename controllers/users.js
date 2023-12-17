@@ -69,17 +69,19 @@ const updateGoal = async (req, res) => {
     dailyCalories: dailyCalories
   })
   
-  const updatedUser = await User.findByIdAndUpdate({ _id }, { dailyNutrition: dailyNutritionCalc, goal }, { new: true })
+  const updatedUser = await User.findByIdAndUpdate(
+    { _id },
+    { dailyNutrition: dailyNutritionCalc, goal },
+    { new: true }
+  ).select('dailyNutrition goal')
+
   res.json(updatedUser)
-  
 }
 
 const addWeight = async (req, res) => {
   const { _id, age, height, gender, coefficientOfActivity, goal } = req.user;
   const { weight } = req.body;
   
- 
-
   const dailyCaloriesCalc = calculateDailyCalories({
     age,
     weight,
@@ -98,11 +100,15 @@ const addWeight = async (req, res) => {
     coefficientOfActivity: coefficientOfActivity
   })
 
-
   await creatingWeighingsDiary(_id, weight, WeighingsDiary, Weighing)
-  const updatedUser = await User.findByIdAndUpdate({ _id }, { dailyNutrition: dailyNutritionCalc, weight, dailyWater: dailyWaterCalc , dailyCalories: dailyCaloriesCalc }, { new: true })
-  res.json(updatedUser)
 
+  const updatedUser = await User.findByIdAndUpdate(
+    { _id },
+    { dailyNutrition: dailyNutritionCalc, weight, dailyWater: dailyWaterCalc, dailyCalories: dailyCaloriesCalc },
+    { new: true }
+  ).select('dailyNutrition weight dailyWater dailyCalories');
+  
+  res.json(updatedUser)
 }
 
 const getStatistic = async (req, res) => {
@@ -180,12 +186,11 @@ const getStatistic = async (req, res) => {
 
 const addAvatar = async (req, res) => {
   const { _id } = req.user;
-
   const avatarURL = req.file.path;
+  
   const updatedUser = await User.findOneAndUpdate({ _id }, { avatarURL }, { new: true });
+
   res.json(updatedUser)
-
-
 }
 
 
