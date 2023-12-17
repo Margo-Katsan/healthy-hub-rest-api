@@ -178,11 +178,22 @@ const getStatistic = async (req, res) => {
     res.json(dataByMonth);
 };
 
+const addAvatar = async (req, res) => {
+  const { _id } = req.user;
+
+  const avatarURL = req.file.path;
+  const updatedUser = await User.findOneAndUpdate({ _id }, { avatarURL }, { new: true });
+  res.json(updatedUser)
+
+
+}
+
 
 module.exports = {
   getCurrent: ctrlWrapper(getCurrent),
   updateInfo: ctrlWrapper(updateInfo),
   updateGoal: ctrlWrapper(updateGoal),
   getStatistic: ctrlWrapper(getStatistic),
-  addWeight: ctrlWrapper(addWeight)
+  addWeight: ctrlWrapper(addWeight),
+  addAvatar: ctrlWrapper(addAvatar)
 }

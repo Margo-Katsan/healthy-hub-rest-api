@@ -4,7 +4,7 @@ const usersCtrl = require('../../controllers/users');
 
 const intakesCtrl = require('../../controllers/intakes')
 
-const {  authenticate, isValidId } = require('../../middlewares');
+const {  authenticate, isValidId, upload } = require('../../middlewares');
 
 // const { schemas } = require('../../models/user')
 
@@ -29,5 +29,7 @@ router.post("/water-intake", authenticate, intakesCtrl.addWaterIntake)
 router.delete("/water-intake", authenticate, intakesCtrl.deleteWaterIntake)
 
 router.get("/statistics", authenticate, usersCtrl.getStatistic)
+
+router.post('/avatar', authenticate, upload.single('avatar'), usersCtrl.addAvatar);
 
 module.exports = router;
