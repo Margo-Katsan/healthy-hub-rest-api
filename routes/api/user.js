@@ -28,6 +28,6 @@ router.post("/water-intake", authenticate, intakesCtrl.addWaterIntake)
 
 router.delete("/water-intake", authenticate, intakesCtrl.deleteWaterIntake)
 
-// router.get("/statistics", authenticate, ctrl.getStatistics)
+router.get("/statistics", authenticate, usersCtrl.getStatistic)
 
 module.exports = router;
