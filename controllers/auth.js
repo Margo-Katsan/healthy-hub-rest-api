@@ -5,8 +5,11 @@ const {transporter, createMailOptions} = require("../googleVerifySender/googleVe
 const calculateDailyCalories = require("../calculations/calculateDailyCalories");
 const calculateDailyNutrition = require("../calculations/calculateDailyNutrition");
 const calculateDailyWater = require("../calculations/calculateDailyWater");
-const { HttpError, ctrlWrapper } = require("../helpers");
+const { HttpError, ctrlWrapper, creatingWeighingsDiary } = require("../helpers");
 const { User } = require('../models/user');
+const { WeighingsDiary } = require("../models/weighingsDiary");
+
+const { Weighing } = require("../models/weighing");
 
 const { SECRET_KEY } = process.env;
 
@@ -47,6 +50,8 @@ const signup = async (req, res) => {
     dailyNutrition:dailyNutritionCalc,
     dailyWater:dailyWaterCalc
   })
+
+  await creatingWeighingsDiary(newUser._id, newUser.weight, WeighingsDiary, Weighing)
   
   res.status(201).json({
     token,

@@ -6,7 +6,6 @@ const weighingSchema = new Schema({
   
   kg: {
     type: Number,
-    required: true
   },
    owner: {
     type: Schema.Types.ObjectId,

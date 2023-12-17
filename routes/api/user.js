@@ -18,8 +18,6 @@ router.put('/goal', authenticate, usersCtrl.updateGoal);
 
 router.post('/weight', authenticate, usersCtrl.addWeight);
 
-router.get('/diary', authenticate, intakesCtrl.getDiary)
-
 router.post('/food-intake', authenticate, intakesCtrl.addFoodIntake);
 
 router.put('/food-intake/:foodId', authenticate, isValidId, intakesCtrl.updateFoodIntake)

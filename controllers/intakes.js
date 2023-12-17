@@ -1,4 +1,6 @@
-const { ctrlWrapper } = require("../helpers")
+const { ctrlWrapper, getOrCreateDiary } = require("../helpers")
+
+const { ObjectId } = require('mongodb');
 
 // const roundToTenths = require("../calculations/roundToTenths")
 
@@ -11,36 +13,6 @@ const { DailyMeal } = require("../models/dailyMeal")
 const { FoodIntake } = require("../models/foodIntake")
 
 const { WaterIntake } = require("../models/waterIntake")
-
-const getOrCreateDiary = async (owner, Diary) => {
-  let diary = await Diary.findOne({ owner });
-
-  if (!diary) {
-    diary = new Diary({ owner });
-    await diary.save();
-  }
-
-  return diary;
-};
-
-const getUpdatedDailyMeal = (mealType, savedFood) => ({
-  $push: { [`${mealType}.foods`]: savedFood },
-  $inc: {
-    [`${mealType}.totalCarbohydrates`]: savedFood.nutrition.carbohydrates,
-    [`${mealType}.totalProtein`]: savedFood.nutrition.protein,
-    [`${mealType}.totalFat`]: savedFood.nutrition.fat,
-    [`totalConsumedCarbohydratesPerDay`]: savedFood.nutrition.carbohydrates,
-    [`totalConsumedProteinPerDay`]: savedFood.nutrition.protein,
-    [`totalConsumedFatPerDay`]: savedFood.nutrition.fat,
-    [`totalConsumedCaloriesPerDay`]: savedFood.calories,
-  },
-});
-
-const getDiary = async (req, res) => {
-  const { _id: owner } = req.user;
-  const result = await FoodIntakesDiary.find({owner})
-  res.json(result)
-}
 
 const addFoodIntake = async (req, res) => {
   const { mealType, foodDetails } = req.body;
@@ -64,7 +36,16 @@ const addFoodIntake = async (req, res) => {
     wasCreatedNewDailyMeal = true;
   }
   // потом заменить на текущую дату
-  dailyMeal = await DailyMeal.findOneAndUpdate({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } }, getUpdatedDailyMeal(mealType, savedFood), { new: true });
+  dailyMeal = await DailyMeal.findOneAndUpdate({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } }, {$push: { [`${mealType}.foods`]: savedFood },
+  $inc: {
+    [`${mealType}.totalCarbohydrates`]: savedFood.nutrition.carbohydrates,
+    [`${mealType}.totalProtein`]: savedFood.nutrition.protein,
+    [`${mealType}.totalFat`]: savedFood.nutrition.fat,
+    [`totalConsumedCarbohydratesPerDay`]: savedFood.nutrition.carbohydrates,
+    [`totalConsumedProteinPerDay`]: savedFood.nutrition.protein,
+    [`totalConsumedFatPerDay`]: savedFood.nutrition.fat,
+    [`totalConsumedCaloriesPerDay`]: savedFood.calories,
+  }}, { new: true });
   
   if (wasCreatedNewDailyMeal) {
     updatedMealsByDay = {
@@ -88,40 +69,73 @@ const addFoodIntake = async (req, res) => {
 };
 
 const updateFoodIntake = async (req, res) => {
-  // const { foodId } = req.params;
+  const { foodId } = req.params;
+  const { _id: owner } = req.user;
+  const { mealType, foodDetails } = req.body;
+  const diary = await getOrCreateDiary(owner, FoodIntakesDiary);
 
-  // const result = await FoodIntake.findByIdAndUpdate(foodId, req.body, { new: true });
+  const updatedFood = await FoodIntake.findByIdAndUpdate(foodId, foodDetails, { new: true });
 
-  // if (!result) {
-  //   throw HttpError(404, "Not found")
-  // }
-  // res.json(result);
+  let dailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } })
+
+  const indexFoodToUpdate = dailyMeal[mealType].foods.findIndex(food => food._id.equals(new ObjectId(foodId)));
+
+  dailyMeal = await DailyMeal.findOneAndUpdate({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } }, {
+    $set: {
+       [`${mealType}.foods.${indexFoodToUpdate}`]: updatedFood 
+    },
+    $inc: {
+    [`${mealType}.totalCarbohydrates`]: updatedFood.nutrition.carbohydrates,
+    [`${mealType}.totalProtein`]: updatedFood.nutrition.protein,
+    [`${mealType}.totalFat`]: updatedFood.nutrition.fat,
+    [`totalConsumedCarbohydratesPerDay`]: updatedFood.nutrition.carbohydrates,
+    [`totalConsumedProteinPerDay`]: updatedFood.nutrition.protein,
+    [`totalConsumedFatPerDay`]: updatedFood.nutrition.fat,
+    [`totalConsumedCaloriesPerDay`]: updatedFood.calories,
+  },
+  }, { new: true })
+  await FoodIntakesDiary.findOneAndUpdate({ owner }, {
+      $set: {
+        [`mealsByDate.${diary.mealsByDate.length - 1}`]: dailyMeal
+      }
+    })
+  res.json(dailyMeal)
 }
 
 const deleteFoodIntake = async (req, res) => {
-  // const { mealType } = req.body;
-  //   const { _id: owner } = req.user;
+  const { _id: owner } = req.user;
+  const { mealType } = req.body;
+  
+  const diary = await getOrCreateDiary(owner, FoodIntakesDiary);
+
+  let dailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } })
+
+  const foodsToDelete = dailyMeal[mealType];
 
 
-  //   const diary = await FoodIntakesDiary.findOne({ owner });
-  //   console.log(owner)
-  //   if (!diary) {
-  //     return res.status(404).json({ error: 'Diary not found' });
-  //   }
+  dailyMeal = await DailyMeal.findOneAndUpdate({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } }, {
+    $set: {
+      [`${mealType}.foods`]: []
+    },
+    $mul: {
+      [`${mealType}.totalCarbohydrates`]: 0,
+    [`${mealType}.totalProtein`]: 0,
+    [`${mealType}.totalFat`]: 0,
+    },
+    
+    $inc: {
+    [`totalConsumedCarbohydratesPerDay`]: -foodsToDelete.totalCarbohydrates,
+    [`totalConsumedProteinPerDay`]: -foodsToDelete.totalProtein,
+    [`totalConsumedFatPerDay`]: -foodsToDelete.totalFat,
+  },
+  }, { new: true })
 
-  //   diary.mealsByDate.forEach((meal) => {
-  //     if (meal[mealType]) {
-  //       meal[mealType].foods = [];
-  //       meal[mealType].totalCarbohydrates = 0;
-  //       meal[mealType].totalProtein = 0;
-  //       meal[mealType].totalFat = 0;
-  //     }
-  //   });
-
-  //   const updatedDiary = await diary.save();
-
-  //   return res.json(updatedDiary);
-
+  await FoodIntakesDiary.findOneAndUpdate({ owner }, {
+      $set: {
+        [`mealsByDate.${diary.mealsByDate.length - 1}`]: dailyMeal
+      }
+    })
+  res.json(dailyMeal)
   
 }
 
@@ -172,11 +186,21 @@ const addWaterIntake = async (req, res) => {
 }
 
 const deleteWaterIntake = async (req, res) => {
-  
+  const { _id: owner } = req.user;
+
+  const waterIntake = await WaterIntake.findOneAndRemove({ owner, createdAt: { $gte: new Date('2023-12-17'), $lt: new Date('2023-12-18') } })
+
+  await WaterIntakesDiary.findOneAndUpdate({ owner }, {
+    $pull: {waterIntakesByDate: {_id: waterIntake._id}}
+  }, { new: true });
+
+  res.status(201).json(waterIntake);
+
+
+
 }
 
 module.exports = {
-  getDiary: ctrlWrapper(getDiary),
   addFoodIntake: ctrlWrapper(addFoodIntake),
   updateFoodIntake: ctrlWrapper(updateFoodIntake),
   deleteFoodIntake: ctrlWrapper(deleteFoodIntake),
