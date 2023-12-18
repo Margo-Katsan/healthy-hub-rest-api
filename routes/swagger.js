@@ -69,11 +69,27 @@
  *         description: "Successful registration"
  *         content:
  *           application/json:
- *             example:
- *               token: "your_token_here"
- *               user:
- *                 name: "John Doe"
- *                 email: "john@example.com"
+ *              example:
+ *                 user:
+ *                   dailyNutrition:
+ *                     carbohydrates: 524
+ *                     protein: 238
+ *                     fat: 85
+ *                   _id: "657f06a253fd33c3bbc9276e"
+ *                   name: "Dima"
+ *                   email: "smilek222@gmail.com"
+ *                   token: "token"
+ *                   age: 12
+ *                   gender: "male"
+ *                   weight: 123
+ *                   height: 165
+ *                   coefficientOfActivity: 1.55
+ *                   goal: "lose fat"
+ *                   createdAt: "2023-12-17T14:33:06.009Z"
+ *                   updatedAt: "2023-12-18T17:08:12.047Z"
+ *                   dailyCalories: 3813
+ *                   dailyWater: 4040
+ *                   avatarURL: "link"
  * /api/auth/signin:
  *     post:
  *       tags:
@@ -107,10 +123,28 @@
  *           content:
  *             application/json:
  *               example:
- *                 token: "your_token_here"
  *                 user:
- *                   name: "Ivan Petrov"
- *                   email: "ivan@example.com"
+ *                   dailyNutrition:
+ *                     carbohydrates: 524
+ *                     protein: 238
+ *                     fat: 85
+ *                   _id: "657f06a253fd33c3bbc9276e"
+ *                   name: "Dima"
+ *                   email: "smilek222@gmail.com"
+ *                   token: "token"
+ *                   age: 12
+ *                   gender: "male"
+ *                   weight: 123
+ *                   height: 165
+ *                   coefficientOfActivity: 1.55
+ *                   goal: "lose fat"
+ *                   createdAt: "2023-12-17T14:33:06.009Z"
+ *                   updatedAt: "2023-12-18T17:08:12.047Z"
+ *                   dailyCalories: 3813
+ *                   dailyWater: 4040
+ *                   avatarURL: "link"
+ *                 consumedMealsByDay: 125
+ *                 consumedWaterByDay: 566
  *         '401':
  *           description: "Authentication error"
  *           content:
@@ -285,15 +319,49 @@
  *         content:
  *           application/json:
  *             example:
- *               user:
- *                 name: "John Doe"
- *                 email: "john@example.com"
- *                 age: 25
- *                 weight: 70
- *                 height: 175
- *                 gender: "male"
- *                 coefficientOfActivity: 1.55
- *                 goal: "lose fat"
+ *               name: "R"
+ *               goal: "lose fat"
+ *               weight: 46
+ *               dailyCalories: 2673
+ *               dailyNutrition:
+ *                 carbohydrates: 368
+ *                 protein: 167
+ *                 fat: 59
+ *               dailyWater: 2080
+ *               consumedMealsByDay:
+ *                 breakfast:
+ *                   totalCarbohydrates: 0
+ *                   totalProtein: 0
+ *                   totalFat: 0
+ *                   totalCalories: 0
+ *                   foods: []
+ *                 lunch:
+ *                   totalCarbohydrates: 0
+ *                   totalProtein: 0
+ *                   totalFat: 0
+ *                   totalCalories: 0
+ *                   foods: []
+ *                 dinner:
+ *                   totalCarbohydrates: 0
+ *                   totalProtein: 0
+ *                   totalFat: 0
+ *                   totalCalories: 0
+ *                   foods: []
+ *                 snack:
+ *                   totalCarbohydrates: 0
+ *                   totalProtein: 0
+ *                   totalFat: 0
+ *                   totalCalories: 0
+ *                   foods: []
+ *                 _id: "657f98d6a4e55ab0659e39f5"
+ *                 owner: "657f5f23c9d39029db1002bd"
+ *                 createdAt: "2023-12-18T00:56:54.711Z"
+ *                 updatedAt: "2023-12-18T01:01:43.333Z"
+ *                 totalConsumedCaloriesPerDay: 0
+ *                 totalConsumedCarbohydratesPerDay: 0
+ *                 totalConsumedFatPerDay: 0
+ *                 totalConsumedProteinPerDay: 0
+ *               consumedWaterByDay: 555
  *       '401':
  *         description: "Unauthorized"
  *         content:
