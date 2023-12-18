@@ -1,8 +1,8 @@
-const { ctrlWrapper, getOrCreateDiary, getStartAndEndOfDay } = require("../helpers")
+const { ctrlWrapper, HttpError, getOrCreateDiary, getStartAndEndOfDay } = require("../helpers")
 
 const { ObjectId } = require('mongodb');
 
-// const roundToTenths = require("../calculations/roundToTenths")
+const roundToTenths = require("../calculations/roundToTenths")
 
 const { FoodIntakesDiary } = require("../models/foodIntakesDiary")
 
@@ -24,9 +24,11 @@ const addFoodIntake = async (req, res) => {
 
   const { startOfDay, endOfDay } = getStartAndEndOfDay();
 
-  const newFood = new FoodIntake(foodDetails);
+  const newFood = FoodIntake({ ...foodDetails, mealType, owner });
 
   const savedFood = await newFood.save();
+
+  const { calories, nutrition: {carbohydrates, protein, fat}, name} = savedFood;
 
   const diary = await getOrCreateDiary(owner, FoodIntakesDiary);
 
@@ -41,20 +43,31 @@ const addFoodIntake = async (req, res) => {
   dailyMeal = await DailyMeal.findOneAndUpdate(
     { owner, createdAt: { $gte: startOfDay, $lt: endOfDay } },
     {
-      $push: { [`${mealType}.foods`]: savedFood },
+      $push: { [`${mealType}.foods`]: {calories, nutrition: {carbohydrates, protein, fat}, name } },
       $inc: {
-        [`${mealType}.totalCarbohydrates`]: savedFood.nutrition.carbohydrates,
-        [`${mealType}.totalProtein`]: savedFood.nutrition.protein,
-        [`${mealType}.totalFat`]: savedFood.nutrition.fat,
-        [`${mealType}.totalCalories`]: savedFood.calories,
-        [`totalConsumedCarbohydratesPerDay`]: savedFood.nutrition.carbohydrates,
-        [`totalConsumedProteinPerDay`]: savedFood.nutrition.protein,
-        [`totalConsumedFatPerDay`]: savedFood.nutrition.fat,
-        [`totalConsumedCaloriesPerDay`]: savedFood.calories,
-      }
+        [`${mealType}.totalCarbohydrates`]: carbohydrates,
+        [`${mealType}.totalProtein`]: protein,
+        [`${mealType}.totalFat`]: fat,
+        [`${mealType}.totalCalories`]: calories,
+        [`totalConsumedCarbohydratesPerDay`]: carbohydrates,
+        [`totalConsumedProteinPerDay`]: protein,
+        [`totalConsumedFatPerDay`]: fat,
+        [`totalConsumedCaloriesPerDay`]: calories,
+      },
+      
     },
-    { new: true });
+    { new: true }).select('-owner -createdAt -updatedAt');
   
+  dailyMeal[mealType].totalCarbohydrates = roundToTenths(dailyMeal[mealType].totalCarbohydrates)
+  dailyMeal[mealType].totalProtein = roundToTenths(dailyMeal[mealType].totalProtein)
+  dailyMeal[mealType].totalFat = roundToTenths(dailyMeal[mealType].totalFat)
+  dailyMeal[mealType].totalCalories = Math.round(dailyMeal[mealType].totalCalories)
+  
+  dailyMeal.totalConsumedCaloriesPerDay = Math.round(dailyMeal.totalConsumedCaloriesPerDay)
+  dailyMeal.totalConsumedCarbohydratesPerDay = roundToTenths(dailyMeal.totalConsumedCarbohydratesPerDay)
+  dailyMeal.totalConsumedProteinPerDay = roundToTenths(dailyMeal.totalConsumedProteinPerDay)
+  dailyMeal.totalConsumedFatPerDay = roundToTenths(dailyMeal.totalConsumedFatPerDay)
+
   if (wasCreatedNewDailyMeal) {
     updatedMealsByDay = {
       $push: {
@@ -72,7 +85,7 @@ const addFoodIntake = async (req, res) => {
 
   await FoodIntakesDiary.findOneAndUpdate({ owner }, updatedMealsByDay, { new: true });
 
-  return res.status(200).json(dailyMeal);
+  return res.status(201).json(dailyMeal);
 
 };
 
@@ -87,7 +100,15 @@ const updateFoodIntake = async (req, res) => {
 
   const updatedFood = await FoodIntake.findByIdAndUpdate(foodId, foodDetails, { new: true });
 
+  if (!updatedFood) {
+    throw HttpError(404, "Not found");
+  }
+
   let dailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+
+  if (!dailyMeal) {
+    throw HttpError(404, "Not found");
+  }
 
   const indexFoodToUpdate = dailyMeal[mealType].foods.findIndex(food => food._id.equals(new ObjectId(foodId)));
 
@@ -128,6 +149,17 @@ const updateFoodIntake = async (req, res) => {
     },
     { new: true })
   
+  dailyMeal[mealType].totalCarbohydrates = roundToTenths(dailyMeal[mealType].totalCarbohydrates)
+  dailyMeal[mealType].totalProtein = roundToTenths(dailyMeal[mealType].totalProtein)
+  dailyMeal[mealType].totalFat = roundToTenths(dailyMeal[mealType].totalFat)
+  dailyMeal[mealType].totalCalories = Math.round(dailyMeal[mealType].totalCalories)
+  
+
+  dailyMeal.totalConsumedCaloriesPerDay = Math.round(dailyMeal.totalConsumedCaloriesPerDay)
+  dailyMeal.totalConsumedCarbohydratesPerDay = roundToTenths(dailyMeal.totalConsumedCarbohydratesPerDay)
+  dailyMeal.totalConsumedProteinPerDay = roundToTenths(dailyMeal.totalConsumedProteinPerDay)
+  dailyMeal.totalConsumedFatPerDay = roundToTenths(dailyMeal.totalConsumedFatPerDay)
+  
   await FoodIntakesDiary.findOneAndUpdate(
     { owner },
     {
@@ -149,7 +181,13 @@ const deleteFoodIntake = async (req, res) => {
 
   let dailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
 
+  if (!dailyMeal) {
+    throw HttpError(404, "Not found");
+  }
+
   const foodsToDelete = dailyMeal[mealType];
+
+  await FoodIntake.deleteMany({ owner, mealType, createdAt: { $gte: startOfDay, $lt: endOfDay } });
 
   dailyMeal = await DailyMeal.findOneAndUpdate(
     { owner, createdAt: { $gte: startOfDay, $lt: endOfDay } },
@@ -172,13 +210,17 @@ const deleteFoodIntake = async (req, res) => {
     },
     { new: true })
 
-  await FoodIntakesDiary.findOneAndUpdate(
+  const updatedDiary = await FoodIntakesDiary.findOneAndUpdate(
     { owner },
     {
       $set: {
         [`mealsByDate.${diary.mealsByDate.length - 1}`]: dailyMeal
       }
     })
+  
+  if (!updatedDiary) {
+    throw HttpError(404, "Not found");
+  }
   
   res.json(dailyMeal)
 }
@@ -238,11 +280,15 @@ const deleteWaterIntake = async (req, res) => {
 
   const waterIntake = await WaterIntake.findOneAndRemove({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
 
+  if (!waterIntake) {
+    throw HttpError(404, "Not found");
+  }
+
   await WaterIntakesDiary.findOneAndUpdate({ owner }, {
     $pull: {waterIntakesByDate: {_id: waterIntake._id}}
   }, { new: true });
 
-  res.status(201).json(waterIntake);
+  res.json(waterIntake);
 }
 
 module.exports = {

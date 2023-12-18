@@ -2,6 +2,7 @@ const { MEN_BMR_CONSTANTS, WOMEN_BMR_CONSTANTS } = require("../constants/calorie
 
 const calculateDailyCalories = (userData) => {
   const { age, weight, height, gender, coefficientOfActivity } = userData;
+  
   let { BASE_METABOLIC_RATE, WEIGHT_COEFFICIENT, HEIGHT_COEFFICIENT, AGE_COEFFICIENT } = {};
 
   switch (gender) {

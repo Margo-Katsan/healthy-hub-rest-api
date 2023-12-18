@@ -9,6 +9,7 @@ const {
 
 const calculateDailyWater = (userData) => {
   const { weight, coefficientOfActivity } = userData;
+
   let ACTIVITY_COEFFICIENT;
 
   switch (coefficientOfActivity) {

@@ -8,6 +8,16 @@ const foodIntakeSchema = new Schema({
     required: true
 
   },
+  mealType: {
+    type: String,
+    enum: ['breakfast', 'lunch', 'dinner', 'snack'],
+    required: true
+  },
+  owner: {
+    type: Schema.Types.ObjectId,
+    ref: "user",
+    required: true
+  },
   nutrition: {
     carbohydrates: Number,
     protein: Number,
