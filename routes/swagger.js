@@ -320,13 +320,13 @@
  *           application/json:
  *             example:
  *               name: "R"
- *               email: "margo@gmail.com",
- *               age: 22,
- *               gender: "female",
+ *               email: "margo@gmail.com"
+ *               age: 22
+ *               gender: "female"
  *               weight: 47,
- *               height: 169,
+ *               height: 169
  *               goal: "lose fat"
- *               coefficientOfActivity: 1.2,
+ *               coefficientOfActivity: 1.2
  *               dailyCalories: 2673
  *               dailyNutrition:
  *                 carbohydrates: 368
