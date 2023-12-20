@@ -362,7 +362,7 @@
  *         content:
  *           application/json:
  *             example:
- *               user
+ *               user:
  *                 name: "R"
  *                 email: "margo@gmail.com"
  *                 age: 25
