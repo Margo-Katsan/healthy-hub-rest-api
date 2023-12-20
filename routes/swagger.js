@@ -70,26 +70,27 @@
  *         content:
  *           application/json:
  *              example:
+ *                 token: ""
  *                 user:
- *                   dailyNutrition:
- *                     carbohydrates: 524
- *                     protein: 238
- *                     fat: 85
  *                   _id: "657f06a253fd33c3bbc9276e"
  *                   name: "Dima"
  *                   email: "smilek222@gmail.com"
- *                   token: "token"
  *                   age: 12
  *                   gender: "male"
  *                   weight: 123
  *                   height: 165
  *                   coefficientOfActivity: 1.55
  *                   goal: "lose fat"
- *                   createdAt: "2023-12-17T14:33:06.009Z"
- *                   updatedAt: "2023-12-18T17:08:12.047Z"
  *                   dailyCalories: 3813
  *                   dailyWater: 4040
- *                   avatarURL: "link"
+ *                   dailyNutrition:
+ *                     carbohydrates: 524
+ *                     protein: 238
+ *                     fat: 85
+ *                   avatarURL: ""
+ *                 consumedMealsByDay: 0,
+ *                 consumedWaterByDay: 0,
+ *                   
  * /api/auth/signin:
  *     post:
  *       tags:
@@ -123,27 +124,69 @@
  *           content:
  *             application/json:
  *               example:
+ *                 token: ""
  *                 user:
- *                   dailyNutrition:
- *                     carbohydrates: 524
- *                     protein: 238
- *                     fat: 85
  *                   _id: "657f06a253fd33c3bbc9276e"
  *                   name: "Dima"
  *                   email: "smilek222@gmail.com"
- *                   token: "token"
  *                   age: 12
  *                   gender: "male"
  *                   weight: 123
  *                   height: 165
  *                   coefficientOfActivity: 1.55
  *                   goal: "lose fat"
- *                   createdAt: "2023-12-17T14:33:06.009Z"
- *                   updatedAt: "2023-12-18T17:08:12.047Z"
  *                   dailyCalories: 3813
  *                   dailyWater: 4040
- *                   avatarURL: "link"
- *                 consumedMealsByDay: 125
+ *                   dailyNutrition:
+ *                     carbohydrates: 524
+ *                     protein: 238
+ *                     fat: 85
+ *                   avatarURL: ""
+ *                 consumedMealsByDay: 
+ *                   breakfast:
+ *                     totalCarbohydrates: 100
+ *                     totalProtein: 10
+ *                     totalFat: 5
+ *                     totalCalories: 115
+ *                     foods: [
+ *                       _id: 65823b3c2549fd125ae2a0fa
+ *                       name: banana
+ *                       nutrition: 
+ *                         carbohydrates: 100
+ *                         protein: 10
+ *                         fat: 5  
+ *                       calories: 115
+ *                     ]
+ *                   lunch:
+ *                     totalCarbohydrates: 100
+ *                     totalProtein: 10
+ *                     totalFat: 5
+ *                     totalCalories: 115
+ *                     foods: [
+ *                       _id: 65823b3c2549fd125ae2a0fa
+ *                       name: banana
+ *                       nutrition: 
+ *                         carbohydrates: 100
+ *                         protein: 10
+ *                         fat: 5  
+ *                       calories: 115
+ *                     ]
+ *                   dinner:
+ *                     totalCarbohydrates: 0
+ *                     totalProtein: 0
+ *                     totalFat: 0
+ *                     totalCalories: 0
+ *                     foods: []
+ *                   snack:
+ *                     totalCarbohydrates: 0
+ *                     totalProtein: 0
+ *                     totalFat: 0
+ *                     totalCalories: 0
+ *                     foods: []
+ *                   totalConsumedCaloriesPerDay: 230
+ *                   totalConsumedCarbohydratesPerDay: 200
+ *                   totalConsumedFatPerDay: 10
+ *                   totalConsumedProteinPerDay: 20
  *                 consumedWaterByDay: 566
  *         '401':
  *           description: "Authentication error"
@@ -319,33 +362,51 @@
  *         content:
  *           application/json:
  *             example:
- *               name: "R"
- *               email: "margo@gmail.com"
- *               age: 25
- *               gender: "female"
- *               weight: 47
- *               height: 169
- *               goal: "maintain"
- *               coefficientOfActivity: 1.2
- *               dailyCalories: 2673
- *               dailyNutrition:
- *                 carbohydrates: 368
- *                 protein: 167
- *                 fat: 59
- *               dailyWater: 2080
- *               consumedMealsByDay:
+ *               user
+ *                 name: "R"
+ *                 email: "margo@gmail.com"
+ *                 age: 25
+ *                 gender: "female"
+ *                 weight: 47
+ *                 height: 169
+ *                 goal: "maintain"
+ *                 coefficientOfActivity: 1.2
+ *                 dailyCalories: 2673
+ *                 dailyNutrition:
+ *                   carbohydrates: 368
+ *                   protein: 167
+ *                   fat: 59
+ *                 dailyWater: 2080
+ *                 avatarURL: ""
+ *               consumedMealsByDay: 
  *                 breakfast:
- *                   totalCarbohydrates: 0
- *                   totalProtein: 0
- *                   totalFat: 0
- *                   totalCalories: 0
- *                   foods: []
+ *                   totalCarbohydrates: 100
+ *                   totalProtein: 10
+ *                   totalFat: 5
+ *                   totalCalories: 115
+ *                   foods: [
+ *                     _id: 65823b3c2549fd125ae2a0fa
+ *                     name: banana
+ *                     nutrition: 
+ *                       carbohydrates: 100
+ *                       protein: 10
+ *                       fat: 5  
+ *                     calories: 115
+ *                   ]
  *                 lunch:
- *                   totalCarbohydrates: 0
- *                   totalProtein: 0
- *                   totalFat: 0
- *                   totalCalories: 0
- *                   foods: []
+ *                   totalCarbohydrates: 100
+ *                   totalProtein: 10
+ *                   totalFat: 5
+ *                   totalCalories: 115
+ *                   foods: [
+ *                     _id: 65823b3c2549fd125ae2a0fa
+ *                     name: banana
+ *                     nutrition: 
+ *                       carbohydrates: 100
+ *                       protein: 10
+ *                       fat: 5  
+ *                       calories: 115
+ *                   ]
  *                 dinner:
  *                   totalCarbohydrates: 0
  *                   totalProtein: 0
@@ -358,13 +419,12 @@
  *                   totalFat: 0
  *                   totalCalories: 0
  *                   foods: []
- *                 _id: "657f98d6a4e55ab0659e39f5"
- *                 totalConsumedCaloriesPerDay: 0
- *                 totalConsumedCarbohydratesPerDay: 0
- *                 totalConsumedFatPerDay: 0
- *                 totalConsumedProteinPerDay: 0
- *                 consumedWaterByDay: 555
- *                 avatarURL: ''
+ *                 totalConsumedCaloriesPerDay: 230
+ *                 totalConsumedCarbohydratesPerDay: 200
+ *                 totalConsumedFatPerDay: 10
+ *                 totalConsumedProteinPerDay: 20
+ *               consumedWaterByDay: 555
+ *                 
  *       '401':
  *         description: "Unauthorized"
  *         content:

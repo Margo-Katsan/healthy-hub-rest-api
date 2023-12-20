@@ -35,7 +35,6 @@ const getCurrent = async (req, res) => {
     user,
     consumedMealsByDay: getDailyMeal,
     consumedWaterByDay: getWaterIntake,
-    avatarURL: avatarURL ?? ''
   })
 
 }

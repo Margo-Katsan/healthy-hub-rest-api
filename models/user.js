@@ -30,7 +30,10 @@ const userSchema = new Schema({
     default: ""
   },
 
-  avatarURL: String,
+  avatarURL: {
+    type: String,
+    default: ""
+  },
 
   age: {
     type: Number,

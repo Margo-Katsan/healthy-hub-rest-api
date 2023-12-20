@@ -58,10 +58,14 @@ const signup = async (req, res) => {
   })
 
   await creatingWeighingsDiary(newUser._id, newUser.weight, WeighingsDiary, Weighing)
-  const dataForResponse = await User.findOne({ email }).select('-password');
+
+  const dataForResponse = await User.findOne({ email }).select('-password -createdAt -updatedAt -token');
+
   res.status(201).json({
     token,
-    user: dataForResponse
+    user: dataForResponse,
+    consumedMealsByDay: 0,
+    consumedWaterByDay: 0,
   })
 }
 
@@ -87,13 +91,22 @@ const signin = async (req, res) => {
   const token = jwt.sign(payload, SECRET_KEY, {expiresIn: "23h"})
   await User.findByIdAndUpdate(user._id, { token })
 
-  const dataForResponse = await User.findOne({ email }).select('-password');
+  const dataForResponse = await User.findOne({ email }).select('-password -createdAt -updatedAt -token');
 
-  const getDailyMeal = await DailyMeal.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+  let getDailyMeal = await DailyMeal.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
 
-  const getWaterIntake = await WaterIntake.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+  if (!getDailyMeal) {
+    getDailyMeal = 0;
+  }
+
+  let getWaterIntake = await WaterIntake.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+
+  if (!getWaterIntake) {
+    getWaterIntake = 0;
+  }
 
   res.json({
+    token,
     user: dataForResponse,
     consumedMealsByDay: getDailyMeal,
     consumedWaterByDay: getWaterIntake
