@@ -149,8 +149,8 @@
  *                     totalFat: 5
  *                     totalCalories: 115
  *                     foods: [
- *                       _id: 65823b3c2549fd125ae2a0fa
- *                       name: banana
+ *                       _id: "65823b3c2549fd125ae2a0fa"
+ *                       name: "banana"
  *                       nutrition: 
  *                         carbohydrates: 100
  *                         protein: 10
@@ -163,8 +163,8 @@
  *                     totalFat: 5
  *                     totalCalories: 115
  *                     foods: [
- *                       _id: 65823b3c2549fd125ae2a0fa
- *                       name: banana
+ *                       _id: "65823b3c2549fd125ae2a0fa"
+ *                       name: "banana"
  *                       nutrition: 
  *                         carbohydrates: 100
  *                         protein: 10
@@ -385,8 +385,8 @@
  *                   totalFat: 5
  *                   totalCalories: 115
  *                   foods: [
- *                     _id: 65823b3c2549fd125ae2a0fa
- *                     name: banana
+ *                     _id: "65823b3c2549fd125ae2a0fa"
+ *                     name: "banana"
  *                     nutrition: 
  *                       carbohydrates: 100
  *                       protein: 10
@@ -399,8 +399,8 @@
  *                   totalFat: 5
  *                   totalCalories: 115
  *                   foods: [
- *                     _id: 65823b3c2549fd125ae2a0fa
- *                     name: banana
+ *                     _id: "65823b3c2549fd125ae2a0fa"
+ *                     name: "banana"
  *                     nutrition: 
  *                       carbohydrates: 100
  *                       protein: 10
