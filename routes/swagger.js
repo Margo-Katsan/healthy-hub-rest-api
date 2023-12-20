@@ -321,11 +321,11 @@
  *             example:
  *               name: "R"
  *               email: "margo@gmail.com"
- *               age: 22
+ *               age: 25
  *               gender: "female"
- *               weight: 47,
+ *               weight: 47
  *               height: 169
- *               goal: "lose fat"
+ *               goal: "maintain"
  *               coefficientOfActivity: 1.2
  *               dailyCalories: 2673
  *               dailyNutrition:
