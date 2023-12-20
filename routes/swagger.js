@@ -320,8 +320,13 @@
  *           application/json:
  *             example:
  *               name: "R"
+ *               email: "margo@gmail.com",
+ *               age: 22,
+ *               gender: "female",
+ *               weight: 47,
+ *               height: 169,
  *               goal: "lose fat"
- *               weight: 46
+ *               coefficientOfActivity: 1.2,
  *               dailyCalories: 2673
  *               dailyNutrition:
  *                 carbohydrates: 368
@@ -354,14 +359,12 @@
  *                   totalCalories: 0
  *                   foods: []
  *                 _id: "657f98d6a4e55ab0659e39f5"
- *                 owner: "657f5f23c9d39029db1002bd"
- *                 createdAt: "2023-12-18T00:56:54.711Z"
- *                 updatedAt: "2023-12-18T01:01:43.333Z"
  *                 totalConsumedCaloriesPerDay: 0
  *                 totalConsumedCarbohydratesPerDay: 0
  *                 totalConsumedFatPerDay: 0
  *                 totalConsumedProteinPerDay: 0
- *               consumedWaterByDay: 555
+ *                 consumedWaterByDay: 555
+ *                 avatarURL: ''
  *       '401':
  *         description: "Unauthorized"
  *         content:

@@ -13,23 +13,29 @@ const { User } = require("../models/user")
 const {WaterIntake} = require("../models/waterIntake");
 
 const getCurrent = async (req, res) => {
-  const { _id: owner, name, goal, weight, dailyCalories, dailyNutrition, dailyWater } = req.user;
+  const { _id, avatarURL } = req.user;
 
   const { startOfDay, endOfDay } = getStartAndEndOfDay();
 
-  const getDailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+  let getDailyMeal = await DailyMeal.findOne({ owner: _id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
 
-  const getWaterIntake = await WaterIntake.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+  if (!getDailyMeal) {
+    getDailyMeal = 0;
+  }
+
+  let getWaterIntake = await WaterIntake.findOne({ owner: _id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+
+  if (!getWaterIntake) {
+    getWaterIntake = 0;
+  }
+
+  const user = await User.findById({ _id }).select('-password -createdAt -updatedAt -avatarURL -token')
 
   res.json({
-    name,
-    goal,
-    weight,
-    dailyCalories,
-    dailyNutrition: {...dailyNutrition},
-    dailyWater,
+    user,
     consumedMealsByDay: getDailyMeal,
-    consumedWaterByDay: getWaterIntake
+    consumedWaterByDay: getWaterIntake,
+    avatarURL: avatarURL ?? ''
   })
 
 }
@@ -37,6 +43,7 @@ const getCurrent = async (req, res) => {
 const updateInfo = async (req, res) => {
   const { _id } = req.user;
   const { age, weight, height, gender, coefficientOfActivity, goal } = req.body;
+
   const dailyCaloriesCalc = calculateDailyCalories({
     age,
     weight,
@@ -54,8 +61,14 @@ const updateInfo = async (req, res) => {
     weight,
     coefficientOfActivity: coefficientOfActivity
   })
-await creatingWeighingsDiary(_id, weight, WeighingsDiary, Weighing)
-  const updatedUser = await User.findByIdAndUpdate({ _id }, { ...req.body, dailyNutrition: dailyNutritionCalc, dailyWater: dailyWaterCalc , dailyCalories: dailyCaloriesCalc }, { new: true })
+
+  await creatingWeighingsDiary(_id, weight, WeighingsDiary, Weighing)
+
+  const updatedUser = await User.findByIdAndUpdate(
+    { _id },
+    { ...req.body, dailyNutrition: dailyNutritionCalc, dailyWater: dailyWaterCalc, dailyCalories: dailyCaloriesCalc },
+    { new: true }).select('-password -createdAt -updatedAt')
+  
   res.json(updatedUser)
 
 }
@@ -188,9 +201,12 @@ const addAvatar = async (req, res) => {
   const { _id } = req.user;
   const avatarURL = req.file.path;
   
-  const updatedUser = await User.findOneAndUpdate({ _id }, { avatarURL }, { new: true });
+  const updatedUser = await User.findOneAndUpdate(
+    { _id },
+    { avatarURL },
+    { new: true });
 
-  res.json(updatedUser)
+  res.json(updatedUser.avatarURL ?? '')
 }
 
 module.exports = {
