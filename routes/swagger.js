@@ -90,7 +90,7 @@
  *                   avatarURL: ""
  *                 consumedMealsByDay: 0,
  *                 consumedWaterByDay: 0,
- *                   
+ *
  * /api/auth/signin:
  *     post:
  *       tags:
@@ -142,35 +142,33 @@
  *                     protein: 238
  *                     fat: 85
  *                   avatarURL: ""
- *                 consumedMealsByDay: 
+ *                 consumedMealsByDay:
  *                   breakfast:
  *                     totalCarbohydrates: 100
  *                     totalProtein: 10
  *                     totalFat: 5
  *                     totalCalories: 115
- *                     foods: [
- *                       _id: "65823b3c2549fd125ae2a0fa"
- *                       name: "banana"
- *                       nutrition: 
+ *                     foods:
+ *                       _id: 65823b3c2549fd125ae2a0fa
+ *                       name: banana
+ *                       nutrition:
  *                         carbohydrates: 100
  *                         protein: 10
- *                         fat: 5  
+ *                         fat: 5
  *                       calories: 115
- *                     ]
  *                   lunch:
  *                     totalCarbohydrates: 100
  *                     totalProtein: 10
  *                     totalFat: 5
  *                     totalCalories: 115
- *                     foods: [
- *                       _id: "65823b3c2549fd125ae2a0fa"
- *                       name: "banana"
- *                       nutrition: 
+ *                     foods:
+ *                       _id: 65823b3c2549fd125ae2a0fa
+ *                       name: banana
+ *                       nutrition:
  *                         carbohydrates: 100
  *                         protein: 10
- *                         fat: 5  
+ *                         fat: 5
  *                       calories: 115
- *                     ]
  *                   dinner:
  *                     totalCarbohydrates: 0
  *                     totalProtein: 0
@@ -378,35 +376,33 @@
  *                   fat: 59
  *                 dailyWater: 2080
  *                 avatarURL: ""
- *               consumedMealsByDay: 
+ *               consumedMealsByDay:
  *                 breakfast:
  *                   totalCarbohydrates: 100
  *                   totalProtein: 10
  *                   totalFat: 5
  *                   totalCalories: 115
- *                   foods: [
- *                     _id: "65823b3c2549fd125ae2a0fa"
- *                     name: "banana"
- *                     nutrition: 
+ *                   foods:
+ *                     _id: 65823b3c2549fd125ae2a0fa
+ *                     name: banana
+ *                     nutrition:
  *                       carbohydrates: 100
  *                       protein: 10
- *                       fat: 5  
+ *                       fat: 5
  *                     calories: 115
- *                   ]
  *                 lunch:
  *                   totalCarbohydrates: 100
  *                   totalProtein: 10
  *                   totalFat: 5
  *                   totalCalories: 115
- *                   foods: [
- *                     _id: "65823b3c2549fd125ae2a0fa"
- *                     name: "banana"
- *                     nutrition: 
+ *                   foods:
+ *                     _id: 65823b3c2549fd125ae2a0fa
+ *                     name: banana
+ *                     nutrition:
  *                       carbohydrates: 100
  *                       protein: 10
- *                       fat: 5  
+ *                       fat: 5
  *                       calories: 115
- *                   ]
  *                 dinner:
  *                   totalCarbohydrates: 0
  *                   totalProtein: 0
@@ -424,7 +420,7 @@
  *                 totalConsumedFatPerDay: 10
  *                 totalConsumedProteinPerDay: 20
  *               consumedWaterByDay: 555
- *                 
+ *
  *       '401':
  *         description: "Unauthorized"
  *         content:
