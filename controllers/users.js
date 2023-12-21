@@ -13,7 +13,7 @@ const { User } = require("../models/user")
 const {WaterIntake} = require("../models/waterIntake");
 
 const getCurrent = async (req, res) => {
-  const { _id, avatarURL } = req.user;
+  const { _id } = req.user;
 
   const { startOfDay, endOfDay } = getStartAndEndOfDay();
 
@@ -29,7 +29,7 @@ const getCurrent = async (req, res) => {
     getWaterIntake = 0;
   }
 
-  const user = await User.findById({ _id }).select('-password -createdAt -updatedAt -avatarURL -token')
+  const user = await User.findById({ _id }).select('-password -createdAt -updatedAt -token')
 
   res.json({
     user,
