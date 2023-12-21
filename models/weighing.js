@@ -1,5 +1,7 @@
 const { Schema, model } = require('mongoose');
+
 const Joi = require('joi');
+
 const { handleMongooseError } = require("../helpers");
 
 const weighingSchema = new Schema({
@@ -7,6 +9,7 @@ const weighingSchema = new Schema({
     type: Number,
     required: [true, 'set weight for user']
   },
+  
    owner: {
     type: Schema.Types.ObjectId,
     ref: "user",

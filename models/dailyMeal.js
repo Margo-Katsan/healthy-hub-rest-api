@@ -1,7 +1,28 @@
 const { Schema, model } = require('mongoose');
-const { foodIntakeSchema } = require('./foodIntake')
-// const Joi = require('joi');
+
+const { foodIntakeSchema } = require('./foodIntake');
+
 const { handleMongooseError } = require("../helpers");
+
+const mealSummarySchema = new Schema({
+  foods: [foodIntakeSchema],
+  totalCarbohydrates: {
+    type: Number,
+    default: 0
+  },
+  totalProtein: {
+    type: Number,
+    default: 0
+  },
+  totalFat: {
+    type: Number,
+    default: 0
+  },
+  totalCalories: {
+    type: Number,
+    default: 0
+  }
+});
 
 const dailyMealSchema = new Schema({
   owner: {
@@ -9,82 +30,10 @@ const dailyMealSchema = new Schema({
     ref: "user",
     required: true
   },
-  breakfast: {
-    foods: [foodIntakeSchema],
-    totalCarbohydrates: {
-      type: Number,
-      default: 0
-    },
-    totalProtein: {
-      type: Number,
-      default: 0
-    },
-    totalFat: {
-      type: Number,
-      default: 0
-    },
-    totalCalories: {
-      type: Number,
-      default: 0
-    }
-  },
-  lunch: {
-    foods: [foodIntakeSchema],
-    totalCarbohydrates: {
-      type: Number,
-      default: 0
-    },
-    totalProtein: {
-      type: Number,
-      default: 0
-    },
-    totalFat: {
-      type: Number,
-      default: 0
-    },
-    totalCalories: {
-      type: Number,
-      default: 0
-    }
-  },
-  dinner: {
-    foods: [foodIntakeSchema],
-    totalCarbohydrates: {
-      type: Number,
-      default: 0
-    },
-    totalProtein: {
-      type: Number,
-      default: 0
-    },
-    totalFat: {
-      type: Number,
-      default: 0
-    },
-    totalCalories: {
-      type: Number,
-      default: 0
-    }
-  },
-  snack: {
-    foods: [foodIntakeSchema],
-    totalCarbohydrates: {
-      type: Number,
-      default: 0
-    },
-    totalProtein: {
-      type: Number,
-      default: 0
-    },
-    totalFat: {
-      type: Number,
-      default: 0
-    },
-    totalCalories: {
-      type: Number,
-      default: 0
-    }
-  },
+  breakfast: mealSummarySchema,
+  lunch: mealSummarySchema,
+  dinner: mealSummarySchema,
+  snack: mealSummarySchema,
   totalConsumedCarbohydratesPerDay: Number,
   totalConsumedProteinPerDay: Number,
   totalConsumedFatPerDay: Number,

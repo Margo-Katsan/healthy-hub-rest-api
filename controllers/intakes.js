@@ -15,7 +15,8 @@ const { FoodIntake } = require("../models/foodIntake")
 const { WaterIntake } = require("../models/waterIntake")
 
 const addFoodIntake = async (req, res) => {
-  const { mealType, foodDetails } = req.body;
+  const { mealType, foods } = req.body;
+
   const { _id: owner } = req.user;
   
   let updatedMealsByDay;
@@ -24,23 +25,25 @@ const addFoodIntake = async (req, res) => {
 
   const { startOfDay, endOfDay } = getStartAndEndOfDay();
 
-  const newFood = FoodIntake({ ...foodDetails, mealType, owner });
-
-  const savedFood = await newFood.save();
-
-  const { calories, nutrition: {carbohydrates, protein, fat}, name} = savedFood;
-
   const diary = await getOrCreateDiary(owner, FoodIntakesDiary);
 
   let dailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
 
-  if (!dailyMeal) {
+    if (!dailyMeal) {
     dailyMeal = new DailyMeal({ owner });
     await dailyMeal.save();
     wasCreatedNewDailyMeal = true;
   }
 
-  dailyMeal = await DailyMeal.findOneAndUpdate(
+  for (const food of foods) {
+
+    const newFood = await FoodIntake({ ...food, mealType, owner });
+
+    const savedFood = await newFood.save();
+
+    const { calories, nutrition: { carbohydrates, protein, fat }, name } = savedFood;
+
+    dailyMeal = await DailyMeal.findOneAndUpdate(
     { owner, createdAt: { $gte: startOfDay, $lt: endOfDay } },
     {
       $push: { [`${mealType}.foods`]: {calories, nutrition: {carbohydrates, protein, fat}, name } },
@@ -53,20 +56,20 @@ const addFoodIntake = async (req, res) => {
         [`totalConsumedProteinPerDay`]: protein,
         [`totalConsumedFatPerDay`]: fat,
         [`totalConsumedCaloriesPerDay`]: calories,
-      },
-      
+      } 
     },
-    { new: true }).select('-owner -createdAt -updatedAt');
+      { new: true }).select('-owner -createdAt -updatedAt');
+    
+    dailyMeal[mealType].totalCarbohydrates = roundToTenths(dailyMeal[mealType].totalCarbohydrates)
+    dailyMeal[mealType].totalProtein = roundToTenths(dailyMeal[mealType].totalProtein)
+    dailyMeal[mealType].totalFat = roundToTenths(dailyMeal[mealType].totalFat)
+    dailyMeal[mealType].totalCalories = Math.round(dailyMeal[mealType].totalCalories)
   
-  dailyMeal[mealType].totalCarbohydrates = roundToTenths(dailyMeal[mealType].totalCarbohydrates)
-  dailyMeal[mealType].totalProtein = roundToTenths(dailyMeal[mealType].totalProtein)
-  dailyMeal[mealType].totalFat = roundToTenths(dailyMeal[mealType].totalFat)
-  dailyMeal[mealType].totalCalories = Math.round(dailyMeal[mealType].totalCalories)
-  
-  dailyMeal.totalConsumedCaloriesPerDay = Math.round(dailyMeal.totalConsumedCaloriesPerDay)
-  dailyMeal.totalConsumedCarbohydratesPerDay = roundToTenths(dailyMeal.totalConsumedCarbohydratesPerDay)
-  dailyMeal.totalConsumedProteinPerDay = roundToTenths(dailyMeal.totalConsumedProteinPerDay)
-  dailyMeal.totalConsumedFatPerDay = roundToTenths(dailyMeal.totalConsumedFatPerDay)
+    dailyMeal.totalConsumedCaloriesPerDay = Math.round(dailyMeal.totalConsumedCaloriesPerDay)
+    dailyMeal.totalConsumedCarbohydratesPerDay = roundToTenths(dailyMeal.totalConsumedCarbohydratesPerDay)
+    dailyMeal.totalConsumedProteinPerDay = roundToTenths(dailyMeal.totalConsumedProteinPerDay)
+    dailyMeal.totalConsumedFatPerDay = roundToTenths(dailyMeal.totalConsumedFatPerDay)
+  }
 
   if (wasCreatedNewDailyMeal) {
     updatedMealsByDay = {
