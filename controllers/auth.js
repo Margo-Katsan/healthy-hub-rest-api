@@ -33,7 +33,7 @@ const signup = async (req, res) => {
   } catch (error) {
     throw HttpError(500, "Internal Server Error");
   }
- 
+
   const newUser = await User.create({ ...req.body, password: hashPassword });
   const dailyCaloriesCall = calculateDailyCalories({
     age: newUser.age,
@@ -111,7 +111,7 @@ const signin = async (req, res) => {
     consumedMealsByDay: getDailyMeal,
     consumedWaterByDay: getWaterIntake
   })
-  
+
 }
 
 const forgotPassword = async (req, res) => {
@@ -137,14 +137,16 @@ const forgotPassword = async (req, res) => {
 
   const mailOptions = createMailOptions(user.email, newPassword)
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return res.status(500).json({message: "Internal server error"})
-    }
-  });
-  res.status(201).json({
-    message: "New password was sent to your email"
-  })
+  transporter.sendMail(mailOptions)
+      .then((info) => {
+        res.status(201).json({
+          message: "New password was sent to your email"
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error" });
+      });
 }
 
 const signout = async (req, res) => {
