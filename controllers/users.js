@@ -13,26 +13,30 @@ const { User } = require("../models/user")
 const {WaterIntake} = require("../models/waterIntake");
 
 const getCurrent = async (req, res) => {
-  const { _id } = req.user;
+  const { _id, dailyNutrition, avatarURL, name, email, age, gender, weight, height, coefficientOfActivity, goal, dailyCalories, dailyWater } = req.user;
 
   const { startOfDay, endOfDay } = getStartAndEndOfDay();
 
-  let getDailyMeal = await DailyMeal.findOne({ owner: _id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+  const getDailyMeal = await DailyMeal.findOne({ owner: _id, createdAt: { $gte: startOfDay, $lt: endOfDay } }) ?? 0
 
-  if (!getDailyMeal) {
-    getDailyMeal = 0;
-  }
-
-  let getWaterIntake = await WaterIntake.findOne({ owner: _id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
-
-  if (!getWaterIntake) {
-    getWaterIntake = 0;
-  }
-
-  const user = await User.findById({ _id }).select('-password -createdAt -updatedAt -token')
+  const getWaterIntake = await WaterIntake.findOne({ owner: _id, createdAt: { $gte: startOfDay, $lt: endOfDay } }) ?? 0
 
   res.json({
-    user,
+    user: {
+      _id,
+      name,
+      email,
+      age,
+      gender,
+      weight,
+      height,
+      coefficientOfActivity,
+      goal,
+      dailyNutrition,
+      dailyCalories,
+      dailyWater,
+      avatarURL,
+    },
     consumedMealsByDay: getDailyMeal,
     consumedWaterByDay: getWaterIntake,
   })

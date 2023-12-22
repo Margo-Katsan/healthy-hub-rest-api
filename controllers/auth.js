@@ -93,17 +93,9 @@ const signin = async (req, res) => {
 
   const dataForResponse = await User.findOne({ email }).select('-password -createdAt -updatedAt -token');
 
-  let getDailyMeal = await DailyMeal.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
+  const getDailyMeal = await DailyMeal.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } }) ?? 0
 
-  if (!getDailyMeal) {
-    getDailyMeal = 0;
-  }
-
-  let getWaterIntake = await WaterIntake.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } })
-
-  if (!getWaterIntake) {
-    getWaterIntake = 0;
-  }
+  const getWaterIntake = await WaterIntake.findOne({ owner: dataForResponse._id, createdAt: { $gte: startOfDay, $lt: endOfDay } }) ?? 0
 
   res.json({
     token,
