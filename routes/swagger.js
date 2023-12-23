@@ -443,9 +443,10 @@
  *       - User
  *     summary: Update User Information
  *     description: |
- *       Update user information such as age, weight, height, gender, coefficient of activity, and goal.
+ *       Update user information such as name, age, weight, height, gender and coefficient of activity.
  *
  *       Request body:
+ *       - <b>name</b> (string): User's name.
  *       - <b>age</b> (number, min: 8, max: 120): User's age.
  *       - <b>weight</b> (number, min: 20, max: 300): User's weight.
  *       - <b>height</b> (number, min: 120, max: 220): User's height.
@@ -462,6 +463,10 @@
  *           schema:
  *             type: object
  *             properties:
+ *               name:
+ *                 type: string
+ *                 description: "User's name."
+ *                 enum: ["qwerty"]
  *               age:
  *                 type: number
  *                 description: "User's age."

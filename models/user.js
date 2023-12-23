@@ -116,12 +116,12 @@ const loginSchema = Joi.object({
 })
 
 const updateUserInfoSchema = Joi.object({
+  name: Joi.string(),
   age: Joi.number().min(8).max(120),
   weight: Joi.number().min(20).max(300),
   height: Joi.number().min(120).max(220),
   gender: Joi.string().valid(...genders),
   coefficientOfActivity: Joi.number().valid(...coefficientsOfActivity),
-  goal: Joi.string().valid(...goals)
 })
 
 const updateUserGoalSchema = Joi.object({
