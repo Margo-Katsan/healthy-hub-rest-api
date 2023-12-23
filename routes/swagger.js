@@ -451,7 +451,6 @@
  *       - <b>height</b> (number, min: 120, max: 220): User's height.
  *       - <b>gender</b> (string): User's gender. Choose from values: ['male', 'female'].
  *       - <b>coefficientOfActivity</b> (number): User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9].
- *       - <b>goal</b> (string): User's goal. Choose from values: ['lose fat', 'maintain', 'gain muscle'].
  *
  *     security:
  *       - bearerAuth: []
@@ -483,10 +482,6 @@
  *                 type: number
  *                 description: "User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9]."
  *                 enum: [1.2, 1.375, 1.55, 1.725, 1.9]
- *               goal:
- *                 type: string
- *                 description: "User's goal. Choose from values: ['lose fat', 'maintain', 'gain muscle']."
- *                 enum: ['lose fat', 'maintain', 'gain muscle']
  *
  *     responses:
  *       '200':

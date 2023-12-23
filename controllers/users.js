@@ -44,8 +44,8 @@ const getCurrent = async (req, res) => {
 }
 
 const updateInfo = async (req, res) => {
-  const { _id } = req.user;
-  const { age, weight, height, gender, coefficientOfActivity, goal } = req.body;
+  const { _id, goal } = req.user;
+  const { age, weight, height, gender, coefficientOfActivity } = req.body;
 
   const dailyCaloriesCalc = calculateDailyCalories({
     age,
