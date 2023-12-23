@@ -18,9 +18,9 @@
  *       Request body:
  *       - <b>name</b> (string): User's name.
  *       - <b>email</b> (string): User's email.
- *       - <b>password</b> (string): User's password.
- *       - <b>age</b> (number): User's age.
- *       - <b>weight</b> (number): User's weight.
+ *       - <b>password</b> (string, min length: 8): User's password.
+ *       - <b>age</b> (number, min: 8, max: 120): User's age.
+ *       - <b>weight</b> (number, min: 20, max: 300): User's weight.
  *       - <b>height</b> (number): User's height.
  *       - <b>gender</b> (string): User's gender. Choose from values: ['male', 'female'].
  *       - <b>coefficientOfActivity</b> (number): User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9].
@@ -36,21 +36,27 @@
  *               name:
  *                 type: string
  *                 description: "User's name."
+ *                 enum: ["qwerty"]
  *               email:
  *                 type: string
  *                 description: "User's email."
+ *                 enum: ["qwerty322@gmail.com"]
  *               password:
  *                 type: string
  *                 description: "User's password."
+ *                 enum: [qwerty123]
  *               age:
  *                 type: number
  *                 description: "User's age."
+ *                 enum: [39]
  *               weight:
  *                 type: number
  *                 description: "User's weight."
+ *                 enum: [79]
  *               height:
  *                 type: number
  *                 description: "User's height."
+ *                 enum: [179]
  *               gender:
  *                 type: string
  *                 description: "User's gender."
@@ -114,9 +120,11 @@
  *                 email:
  *                   type: string
  *                   description: "User's email."
+ *                   enum: ["qwerty"]
  *                 password:
  *                   type: string
  *                   description: "User's password."
+ *                   enum: ["qwerty123"]
  *       security: []
  *       responses:
  *         '200':
@@ -238,6 +246,7 @@
  *               email:
  *                 type: string
  *                 description: "User's email for password reset."
+ *                 enum: ["qwerty322@gmail.com"]
  *     security: []
  *     responses:
  *       '200':
@@ -309,6 +318,7 @@
  *           type: number
  *           minimum: 1
  *           maximum: 12
+ *           enum: [1,2,3,4,5,6,7,8,9,10,11,12]
  *
  *     responses:
  *       '200':
@@ -436,9 +446,9 @@
  *       Update user information such as age, weight, height, gender, coefficient of activity, and goal.
  *
  *       Request body:
- *       - <b>age</b> (number): User's age.
- *       - <b>weight</b> (number): User's weight.
- *       - <b>height</b> (number): User's height.
+ *       - <b>age</b> (number, min: 8, max: 120): User's age.
+ *       - <b>weight</b> (number, min: 20, max: 300): User's weight.
+ *       - <b>height</b> (number, min: 120, max: 220): User's height.
  *       - <b>gender</b> (string): User's gender. Choose from values: ['male', 'female'].
  *       - <b>coefficientOfActivity</b> (number): User's activity coefficient. Choose from values: [1.2, 1.375, 1.55, 1.725, 1.9].
  *       - <b>goal</b> (string): User's goal. Choose from values: ['lose fat', 'maintain', 'gain muscle'].
@@ -456,12 +466,15 @@
  *               age:
  *                 type: number
  *                 description: "User's age."
+ *                 enum: [15]
  *               weight:
  *                 type: number
  *                 description: "User's weight."
+ *                 enum: [80]
  *               height:
  *                 type: number
  *                 description: "User's height."
+ *                 enum: [180]
  *               gender:
  *                 type: string
  *                 description: "User's gender."
@@ -562,7 +575,7 @@
  *       Add the user's weight, which will recalculate daily nutrition and update other relevant information.
  *
  *       Request body:
- *       - <b>weight</b> (number, required): User's weight.
+ *       - <b>weight</b> (number, min: 8, max: 120, required): User's weight.
  *
  *     security:
  *       - bearerAuth: []
@@ -577,6 +590,7 @@
  *               weight:
  *                 type: number
  *                 description: "User's new weight."
+ *                 enum: [75]
  *
  *     responses:
  *       '200':
@@ -615,7 +629,7 @@
  *
  *       Request body:
  *       - <b>mealType</b> (string, required): Type of the meal for the food intake. Choose from values: ['breakfast', 'lunch', 'dinner', 'snack'].
- *       - <b>foodDetails</b> (object, required): Details of the consumed food.
+ *       - <b>foods</b> (array, required): Details of the consumed food.
  *         - <b>name</b> (string): Name of the food.
  *         - <b>nutrition</b> (object): Nutritional information of the food.
  *           - <b>carbohydrates</b> (number): Carbohydrates content in grams.
@@ -636,29 +650,36 @@
  *                 type: string
  *                 description: "Type of the meal. Choose from values: ['breakfast', 'lunch', 'dinner', 'snack']."
  *                 enum: ['breakfast', 'lunch', 'dinner', 'snack']
- *               foodDetails:
- *                 type: object
- *                 description: "Details of the consumed food."
- *                 properties:
- *                   name:
- *                     type: string
- *                     description: "Name of the food."
- *                   nutrition:
- *                     type: object
- *                     description: "Nutritional information of the food."
- *                     properties:
- *                       carbohydrates:
- *                         type: number
- *                         description: "Carbohydrates content in grams."
- *                       protein:
- *                         type: number
- *                         description: "Protein content in grams."
- *                       fat:
- *                         type: number
- *                         description: "Fat content in grams."
- *                   calories:
- *                     type: number
- *                     description: "Calories content of the food."
+ *               foods:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   description: "Details of the consumed food."
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       description: "Name of the food."
+ *                       enum: ["banana"]
+ *                     nutrition:
+ *                       type: object
+ *                       description: "Nutritional information of the food."
+ *                       properties:
+ *                         carbohydrates:
+ *                           type: number
+ *                           description: "Carbohydrates content in grams."
+ *                           enum: [15]
+ *                         protein:
+ *                           type: number
+ *                           description: "Protein content in grams."
+ *                           enum: [15]
+ *                         fat:
+ *                           type: number
+ *                           description: "Fat content in grams."
+ *                           enum: [15]
+ *                     calories:
+ *                       type: number
+ *                       description: "Calories content of the food."
+ *                       enum: [115]
  *
  *     responses:
  *       '200':
@@ -666,9 +687,8 @@
  *         content:
  *           application/json:
  *             example:
- *               meal:
- *                 owner: "user_id"
- *                 mealType: "breakfast"
+ *               _id: "user_id"
+ *               breakfast:
  *                 foods: [...list of foods]
  *                 totalCarbohydrates: 30
  *                 totalProtein: 15
@@ -714,10 +734,8 @@
  *         content:
  *           application/json:
  *             example:
- *               meal:
- *                 owner: "user_id"
- *                 mealType: "breakfast"
- *                 foods: []
+ *               breakfast:
+ *                 foods: [...list of foods]
  *       '401':
  *         description: "Unauthorized"
  *         content:
@@ -843,9 +861,11 @@
  *                   name:
  *                     type: string
  *                     description: "Name of the food."
+ *                     enum: ["banana"]
  *                   calories:
  *                     type: number
  *                     description: "Calories in the food."
+ *                     enum: [15]
  *                   nutrition:
  *                     type: object
  *                     description: "Nutritional information of the food."
@@ -853,12 +873,15 @@
  *                       carbohydrates:
  *                         type: number
  *                         description: "Carbohydrates in grams."
+ *                         enum: [15]
  *                       protein:
  *                         type: number
  *                         description: "Protein in grams."
+ *                         enum: [15]
  *                       fat:
  *                         type: number
  *                         description: "Fat in grams."
+ *                         enum: [15]
  *
  *     responses:
  *       '200':
