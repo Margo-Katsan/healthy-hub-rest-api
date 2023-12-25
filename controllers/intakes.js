@@ -40,7 +40,6 @@ const addFoodIntake = async (req, res) => {
     const newFood = await FoodIntake({ ...food, mealType, owner });
 
     const savedFood = await newFood.save();
-    console.log(savedFood._id)
 
     const { _id, calories, nutrition: { carbohydrates, protein, fat }, name } = savedFood;
 
@@ -90,7 +89,6 @@ const addFoodIntake = async (req, res) => {
   await FoodIntakesDiary.findOneAndUpdate({ owner }, updatedMealsByDay, { new: true });
 
   return res.status(201).json(dailyMeal);
-
 };
 
 const updateFoodIntake = async (req, res) => {
@@ -103,11 +101,6 @@ const updateFoodIntake = async (req, res) => {
 
   const diary = await getOrCreateDiary(owner, FoodIntakesDiary);
 
-  if (!nutrition) {
-  
-    throw HttpError(400, "nutrition is required");
-  }
-
   const updatedFood = await FoodIntake.findByIdAndUpdate(
     foodId,
     {
@@ -119,9 +112,6 @@ const updateFoodIntake = async (req, res) => {
     },
     { new: true }
   );
-  console.log(updatedFood)
-
-
 
   if (!updatedFood) {
     
