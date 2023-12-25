@@ -40,13 +40,14 @@ const addFoodIntake = async (req, res) => {
     const newFood = await FoodIntake({ ...food, mealType, owner });
 
     const savedFood = await newFood.save();
+    console.log(savedFood._id)
 
-    const { calories, nutrition: { carbohydrates, protein, fat }, name } = savedFood;
+    const { _id, calories, nutrition: { carbohydrates, protein, fat }, name } = savedFood;
 
     dailyMeal = await DailyMeal.findOneAndUpdate(
     { owner, createdAt: { $gte: startOfDay, $lt: endOfDay } },
     {
-      $push: { [`${mealType}.foods`]: {calories, nutrition: {carbohydrates, protein, fat}, name } },
+      $push: { [`${mealType}.foods`]: {_id, calories, nutrition: {carbohydrates, protein, fat}, name } },
       $inc: {
         [`${mealType}.totalCarbohydrates`]: carbohydrates,
         [`${mealType}.totalProtein`]: protein,
@@ -96,26 +97,48 @@ const updateFoodIntake = async (req, res) => {
   const { foodId } = req.params;
   const { _id: owner } = req.user;
   const { mealType, foodDetails } = req.body;
+  const { name, nutrition, calories } = foodDetails
 
   const { startOfDay, endOfDay } = getStartAndEndOfDay();
 
   const diary = await getOrCreateDiary(owner, FoodIntakesDiary);
 
-  const updatedFood = await FoodIntake.findByIdAndUpdate(foodId, foodDetails, { new: true });
+  if (!nutrition) {
+  
+    throw HttpError(400, "nutrition is required");
+  }
+
+  const updatedFood = await FoodIntake.findByIdAndUpdate(
+    foodId,
+    {
+      name,
+      'nutrition.carbohydrates': nutrition.carbohydrates,
+      'nutrition.protein': nutrition.protein,
+      'nutrition.fat': nutrition.fat,
+      calories
+    },
+    { new: true }
+  );
+  console.log(updatedFood)
+
+
 
   if (!updatedFood) {
+    
     throw HttpError(404, "Not found");
   }
 
   let dailyMeal = await DailyMeal.findOne({ owner, createdAt: { $gte: startOfDay, $lt: endOfDay } })
 
   if (!dailyMeal) {
+    
     throw HttpError(404, "Not found");
   }
 
   const indexFoodToUpdate = dailyMeal[mealType].foods.findIndex(food => food._id.equals(new ObjectId(foodId)));
 
   const foodBeforeUpdate = dailyMeal[mealType].foods[indexFoodToUpdate]
+
 
   dailyMeal = await DailyMeal.findOneAndUpdate(
     { owner, createdAt: { $gte: startOfDay, $lt: endOfDay } },
